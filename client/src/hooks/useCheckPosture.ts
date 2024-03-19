@@ -120,7 +120,6 @@ export default function useCheckPosture({
                 prevPosture === '🖐️' &&
                 data.icon === '✊'
             ) {
-                console.log('grab');
                 grabCoin({
                     y0: getLandMarkPosition(result, 0).y,
                     x5: getLandMarkPosition(result, 5).x,
