@@ -207,12 +207,6 @@ export const grabCoin = ({
     ) as HTMLDivElement;
     const learnerVideo = document.getElementById('learner-video');
     if (!learnerContainer || !learnerVideo) return;
-    /**
-     * 상대 위치를 절대 위치로 바꿔준다.
-     * @param param0.pos 상대위치
-     * @param param0.axis 축(x, y)
-     * @returns 절대위치
-     */
     const coinImg = learnerContainer.getElementsByClassName('coin');
     for (let i = coinImg.length - 1; i >= 0; i--) {
         const coin = coinImg[i] as HTMLImageElement;
