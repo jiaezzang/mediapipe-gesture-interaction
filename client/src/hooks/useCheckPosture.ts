@@ -13,6 +13,7 @@ import {
     drawMetalCat,
     getLandMarkPosition,
     getRandomElement,
+    grabCoin,
     makeGestureRecognizer,
     printPaw,
     tossCoin,
@@ -27,12 +28,8 @@ let prevTime: number;
 
 export default function useCheckPosture({
     inputVideoRef,
-    localCanvasRef,
-    remoteCanvasRef,
 }: {
     inputVideoRef: RefObject<HTMLVideoElement>;
-    localCanvasRef: RefObject<HTMLCanvasElement>;
-    remoteCanvasRef: RefObject<HTMLCanvasElement>;
 }) {
     const setPosture = useSetAtom(postureAtom);
     const vision = useMemo(
@@ -116,6 +113,20 @@ export default function useCheckPosture({
                             ? getLandMarkPosition(result, 5).y
                             : getLandMarkPosition(result, 17).y,
                     ratio: getLandMarkPosition(result, 5).palmRatio,
+                });
+            }
+            if (
+                userType === 'learner' &&
+                prevPosture === '🖐️' &&
+                data.icon === '✊'
+            ) {
+                console.log('grab');
+                grabCoin({
+                    y0: getLandMarkPosition(result, 0).y,
+                    x5: getLandMarkPosition(result, 5).x,
+                    y5: getLandMarkPosition(result, 5).y,
+                    x17: getLandMarkPosition(result, 17).x,
+                    y17: getLandMarkPosition(result, 17).y,
                 });
             }
             if (data.icon === '🤟') {

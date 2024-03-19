@@ -1,6 +1,7 @@
 import { RefObject } from 'react';
 import coin from '../assets/images/coin.png';
 import metalCat from '../assets/images/metalcat.png';
+import { GestureRecognizerResult } from '@mediapipe/tasks-vision';
 
 //GESTURE RECOGNITION
 /**
@@ -11,7 +12,7 @@ import metalCat from '../assets/images/metalcat.png';
  * @returns 지정된 랜드마크의 상대적인 x, y, z 위치 및 손바닥 비율(palmRatio)을 담은 객체를 반환
  */
 export const getLandMarkPosition = (
-    gestureRecognitionResult: any,
+    gestureRecognitionResult: GestureRecognizerResult,
     num: number
 ) => {
     const x = gestureRecognitionResult.landmarks[0][num].x;
@@ -29,7 +30,9 @@ export const getLandMarkPosition = (
  * @param {GestureRecognizerResult} gestureRecognitionResult - 제스처 인식기의 결과 객체
  * @returns 손의 방향(handness)과 포스쳐에 해당하는 아이콘(icon)
  */
-export const makeGestureRecognizer = (gestureRecognitionResult: any) => {
+export const makeGestureRecognizer = (
+    gestureRecognitionResult: GestureRecognizerResult
+) => {
     let icon: null | '👍' | '👎' | '✌️' | '☝️' | '✊' | '🖐️' | '🤟' = null;
 
     const handedness = gestureRecognitionResult.handedness[0]?.[0].displayName;
@@ -179,6 +182,71 @@ export const dropCoin = ({ x, width }: { x: number; width: number }) => {
 };
 
 /**
+ * 코인의 중앙점이 손바닥 안에 있을 때 코인이 사라지는 효과를 준다.
+ * @param param0.y0 손의 0지점의 y좌표
+ * @param param0.x5 손의 5지점의 x좌표
+ * @param param0.y5 손의 5지점의 y좌표
+ * @param param0.x17 손의 17지점의 x좌표
+ * @param param0.y17 손의 17지점의 y좌표
+ */
+export const grabCoin = ({
+    y0,
+    x5,
+    y5,
+    x17,
+    y17,
+}: {
+    y0: number;
+    x5: number;
+    y5: number;
+    x17: number;
+    y17: number;
+}) => {
+    const learnerContainer = document.getElementById(
+        'learner-container'
+    ) as HTMLDivElement;
+    const learnerVideo = document.getElementById('learner-video');
+    if (!learnerContainer || !learnerVideo) return;
+    /**
+     * 상대 위치를 절대 위치로 바꿔준다.
+     * @param param0.pos 상대위치
+     * @param param0.axis 축(x, y)
+     * @returns 절대위치
+     */
+    const coinImg = learnerContainer.getElementsByClassName('coin');
+    for (let i = coinImg.length - 1; i >= 0; i--) {
+        const coin = coinImg[i] as HTMLImageElement;
+        const coinLeft = Number(coin.style.left.replace('px', ''));
+        const coinTop = Number(coin.style.top.replace('px', ''));
+        const coinCenterX = coinLeft + coin.width / 2;
+        const coinCenterY = coinTop + coin.width / 2;
+
+        const highestY =
+            y5 > y17
+                ? y17 * learnerVideo.offsetHeight
+                : y5 * learnerVideo.offsetHeight;
+
+        if (
+            coinCenterY > highestY &&
+            coinCenterY < y0 * learnerVideo.offsetHeight
+        ) {
+            if (
+                x5 < x17 &&
+                coinCenterX > x5 * learnerVideo.offsetWidth &&
+                coinCenterX < x17 * learnerVideo.offsetWidth
+            )
+                coin.remove();
+            else if (
+                x17 < x5 &&
+                coinCenterX > x17 * learnerVideo.offsetWidth &&
+                coinCenterX < x5 * learnerVideo.offsetWidth
+            )
+                coin.remove();
+        }
+    }
+};
+
+/**
  * 코인이 없어지는 효과를 준다.
  * @param 터치 좌표
  */
@@ -208,7 +276,7 @@ export const removeCoin = ({ x, y }: { x: number; y: number }) => {
  * @param {number} param0.y - 발자국을 찍을 Y 좌표
  * @param {number} param0.ratio - 발자국의 크기 비율
  * @param {string} param0.usrType - 유저 타입
- * @returns 로컬 캔버스에 대한 RefObject를 반환
+ * @param {string} param0.imgSrc - 발자국 이미지 경로
  */
 export const printPaw = ({
     localVideoRef,
