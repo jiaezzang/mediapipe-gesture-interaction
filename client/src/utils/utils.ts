@@ -183,11 +183,11 @@ export const dropCoin = ({ x, width }: { x: number; width: number }) => {
 
 /**
  * 코인의 중앙점이 손바닥 안에 있을 때 코인이 사라지는 효과를 준다.
- * @param param0.y0 손의 0지점의 y좌표
- * @param param0.x5 손의 5지점의 x좌표
- * @param param0.y5 손의 5지점의 y좌표
- * @param param0.x17 손의 17지점의 x좌표
- * @param param0.y17 손의 17지점의 y좌표
+ * @param param0.y0 Hand Landmark 0지점의 y좌표
+ * @param param0.x5 Hand Landmark 5지점의 x좌표
+ * @param param0.y5 Hand Landmark 5지점의 y좌표
+ * @param param0.x17 Hand Landmark 17지점의 x좌표
+ * @param param0.y17 Hand Landmark 17지점의 y좌표
  */
 export const grabCoin = ({
     y0,
