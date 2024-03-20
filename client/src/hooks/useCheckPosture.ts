@@ -10,6 +10,7 @@ import { useSetAtom } from 'jotai';
 import { RefObject, useMemo } from 'react';
 import { postureAtom } from '../atoms';
 import {
+    createFixedSizeArray,
     drawMetalCat,
     getLandMarkPosition,
     getRandomElement,
@@ -23,7 +24,8 @@ let lastWebcamTime = -1;
 let runningMode: string = 'none';
 let prevZ: number;
 let prevCore: number;
-let prevPosture: TPosture;
+const maxSize = 2;
+const prevPosture = createFixedSizeArray<TPosture>(maxSize);
 let prevTime: number;
 
 export default function useCheckPosture({
@@ -90,17 +92,18 @@ export default function useCheckPosture({
         result: GestureRecognizerResult;
         userType: TUser;
     }) => {
+        const prevPosArr = prevPosture.toArray();
         if (!inputVideoRef.current) return;
         if (!result || result.landmarks.length === 0) {
-            prevPosture = null;
+            prevPosture.push(null);
             setPosture(null);
             return;
         }
         const data = makeGestureRecognizer(result);
-        if (prevPosture !== data.icon) {
+        if (prevPosArr[maxSize - 1] !== data.icon) {
             if (
                 // userType === 'teacher' &&
-                prevPosture === '✊' &&
+                prevPosArr[maxSize - 1] === '✊' &&
                 data.icon === '🖐️'
             ) {
                 tossCoin({
@@ -117,7 +120,7 @@ export default function useCheckPosture({
             }
             if (
                 userType === 'learner' &&
-                prevPosture === '🖐️' &&
+                prevPosArr[maxSize - 1] === '🖐️' &&
                 data.icon === '✊'
             ) {
                 grabCoin({
@@ -128,6 +131,14 @@ export default function useCheckPosture({
                     y17: getLandMarkPosition(result, 17).y,
                 });
             }
+            if (
+                userType === 'teacher' &&
+                prevPosArr[maxSize - 2] === '✌️' &&
+                prevPosArr[maxSize - 1] === '✊' &&
+                data.icon === '✌️'
+            ) {
+                console.log('ox quiz!!');
+            }
             if (data.icon === '🤟') {
                 drawMetalCat(userType);
             }
@@ -136,11 +147,11 @@ export default function useCheckPosture({
                 (data.icon === null && prevTime && Date.now() - prevTime >= 700)
             ) {
                 setPosture(data.icon);
-                prevPosture = data.icon;
+                prevPosture.push(data.icon);
                 prevTime = Date.now();
             }
         }
-        if (prevPosture === '☝️') {
+        if (prevPosArr[maxSize - 1] === '☝️') {
             if (
                 getLandMarkPosition(result, 8).z - prevZ < -0.035 &&
                 Math.abs(getLandMarkPosition(result, 0).z - prevCore) < 0.01

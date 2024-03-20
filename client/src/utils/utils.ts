@@ -389,3 +389,23 @@ export const getRandomInteger = (min: number, max: number) => {
 export const getRandomElement = (arr: any[]) => {
     return arr[Math.floor(Math.random() * arr.length)];
 };
+
+/**
+ * 고정된 크기의 배열을 생성하며 배열의 크기가 maxSize를 초과할 경우 가장 오래된 요소를 제거한다.
+ * @param maxSize 배열의 최대 크기
+ * @returns 배열에 요소를 추가하는 push 함수와 배열을 반환하는 toArray 함수를 포함한 객체
+ */
+export const createFixedSizeArray = <T>(maxSize: number) => {
+    const array: T[] = [];
+
+    const push = (item: T) => {
+        if (array.length === maxSize) {
+            array.shift();
+        }
+        array.push(item);
+    };
+
+    const toArray = () => array;
+
+    return { push, toArray };
+};
