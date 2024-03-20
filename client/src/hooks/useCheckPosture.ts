@@ -102,7 +102,7 @@ export default function useCheckPosture({
         const data = makeGestureRecognizer(result);
         if (prevPosArr[maxSize - 1] !== data.icon) {
             if (
-                // userType === 'teacher' &&
+                userType === 'teacher' &&
                 prevPosArr[maxSize - 1] === '✊' &&
                 data.icon === '🖐️'
             ) {
