@@ -18,3 +18,6 @@ export const remoteVideoRefAtom =
 
 /** local 사용자의 포스쳐 정의 */
 export const postureAtom = atom<TPosture>(null);
+
+/** 포스쳐 effect 종류 및 매개변수 */
+export const postureEffectAtom = atom<TPostureEffect>({ effect: '' });
