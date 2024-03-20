@@ -8,12 +8,13 @@ import {
 } from '@mediapipe/tasks-vision';
 import { useSetAtom } from 'jotai';
 import { RefObject, useMemo } from 'react';
-import { postureAtom } from '../atoms';
+import { postureAtom, postureEffectAtom } from '../atoms';
 import {
     createFixedSizeArray,
     drawMetalCat,
     getLandMarkPosition,
     getRandomElement,
+    getRandomInteger,
     grabCoin,
     makeGestureRecognizer,
     printPaw,
@@ -34,6 +35,7 @@ export default function useCheckPosture({
     inputVideoRef: RefObject<HTMLVideoElement>;
 }) {
     const setPosture = useSetAtom(postureAtom);
+    const setPostureEffect = useSetAtom(postureEffectAtom);
     const vision = useMemo(
         async () =>
             FilesetResolver.forVisionTasks(
@@ -79,13 +81,13 @@ export default function useCheckPosture({
                 Date.now(),
                 {}
             );
-            setPostureEffect({ result, userType });
+            updatePostureEffect({ result, userType });
         }
         window.requestAnimationFrame(() => predictWebcam(userType));
         lastWebcamTime = inputVideoRef.current.currentTime;
     };
 
-    const setPostureEffect = ({
+    const updatePostureEffect = ({
         result,
         userType,
     }: {
@@ -106,6 +108,21 @@ export default function useCheckPosture({
                 prevPosArr[maxSize - 1] === '✊' &&
                 data.icon === '🖐️'
             ) {
+                const imgPositionY = getRandomInteger(
+                    Math.round(
+                        (
+                            document.getElementById(
+                                'teacher-video'
+                            ) as HTMLVideoElement
+                        ).width * getLandMarkPosition(result, 5).palmRatio
+                    ),
+                    (
+                        document.getElementById(
+                            'learner-video'
+                        ) as HTMLVideoElement
+                    ).offsetHeight *
+                        (2 / 3)
+                );
                 tossCoin({
                     x:
                         data.handedness === 'Left'
@@ -116,6 +133,22 @@ export default function useCheckPosture({
                             ? getLandMarkPosition(result, 5).y
                             : getLandMarkPosition(result, 17).y,
                     ratio: getLandMarkPosition(result, 5).palmRatio,
+                    imgPositionY,
+                });
+                setPostureEffect({
+                    effect: 'tossCoin',
+                    props: {
+                        x:
+                            data.handedness === 'Left'
+                                ? getLandMarkPosition(result, 5).x
+                                : getLandMarkPosition(result, 17).x,
+                        y:
+                            data.handedness === 'Left'
+                                ? getLandMarkPosition(result, 5).y
+                                : getLandMarkPosition(result, 17).y,
+                        ratio: getLandMarkPosition(result, 5).palmRatio,
+                        imgPositionY,
+                    },
                 });
             }
             if (
@@ -123,13 +156,18 @@ export default function useCheckPosture({
                 prevPosArr[maxSize - 1] === '🖐️' &&
                 data.icon === '✊'
             ) {
-                grabCoin({
+                const coinPosition = grabCoin({
                     y0: getLandMarkPosition(result, 0).y,
                     x5: getLandMarkPosition(result, 5).x,
                     y5: getLandMarkPosition(result, 5).y,
                     x17: getLandMarkPosition(result, 17).x,
                     y17: getLandMarkPosition(result, 17).y,
                 });
+                if (coinPosition)
+                    setPostureEffect({
+                        effect: 'removeCoin',
+                        props: coinPosition,
+                    });
             }
             if (
                 userType === 'teacher' &&
@@ -141,6 +179,10 @@ export default function useCheckPosture({
             }
             if (data.icon === '🤟') {
                 drawMetalCat(userType);
+                setPostureEffect({
+                    effect: 'drawMetalCat',
+                    props: { userType },
+                });
             }
             if (
                 data.icon !== null ||
@@ -167,6 +209,16 @@ export default function useCheckPosture({
                     ratio: getLandMarkPosition(result, 8).palmRatio,
                     userType,
                     imgSrc,
+                });
+                setPostureEffect({
+                    effect: 'printPaw',
+                    props: {
+                        x: getLandMarkPosition(result, 8).x,
+                        y: getLandMarkPosition(result, 8).y,
+                        ratio: getLandMarkPosition(result, 8).palmRatio,
+                        userType,
+                        imgSrc,
+                    },
                 });
             }
             prevZ = getLandMarkPosition(result, 8).z;

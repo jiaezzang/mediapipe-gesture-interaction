@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Video from './Video';
+import { useAtomValue } from 'jotai';
+import { postureEffectAtom } from '../../atoms';
 
 export default function LocalVideo({
     videoRef,
@@ -12,6 +14,14 @@ export default function LocalVideo({
     id: 'teacher' | 'learner';
     posture?: TPosture;
 }) {
+    const postureEffect = useAtomValue(postureEffectAtom);
+
+    /** posture effect가 변경됨을 감지 및 관리한다  */
+    useEffect(() => {
+        console.log(
+            `{ type: 'backdrop', data: { remote: backdropImages.local } } 전송`
+        );
+    }, [postureEffect]);
     return (
         <div id={`${id}-container`} className='relative h-2/5 overflow-hidden'>
             <Video id={`${id}-video`} videoRef={videoRef} />

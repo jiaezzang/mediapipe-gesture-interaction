@@ -82,10 +82,12 @@ export const tossCoin = ({
     x,
     y,
     ratio,
+    imgPositionY,
 }: {
     x: number;
     y: number;
     ratio: number;
+    imgPositionY: number;
 }) => {
     const localCanvas = document.getElementById(
         'teacher-canvas'
@@ -121,7 +123,7 @@ export const tossCoin = ({
             height += 8;
 
             if (height > localCanvas.height) {
-                dropCoin({ x: positionX, width: rewardSize });
+                dropCoin({ x: positionX, width: rewardSize, imgPositionY });
                 cancelAnimationFrame(animationId);
                 return;
             }
@@ -138,7 +140,15 @@ export const tossCoin = ({
  * @param {number} param0.x - 동전이 떨어지는 X 좌표
  * @param {number} param0.width - 동전의 사이즈
  */
-export const dropCoin = ({ x, width }: { x: number; width: number }) => {
+export const dropCoin = ({
+    x,
+    width,
+    imgPositionY,
+}: {
+    x: number;
+    width: number;
+    imgPositionY: number;
+}) => {
     const learnerContainer = document.getElementById('learner-container');
     const learnerVideo = document.getElementById('learner-video');
 
@@ -165,11 +175,7 @@ export const dropCoin = ({ x, width }: { x: number; width: number }) => {
         img.style.top = height + 'px';
         learnerContainer.appendChild(img);
         height += 8;
-        if (
-            height >
-            learnerVideo.offsetHeight -
-                getRandomInteger(width, learnerVideo.offsetHeight * (2 / 3))
-        ) {
+        if (height > learnerVideo.offsetHeight - imgPositionY) {
             img.classList.remove('drawing');
             cancelAnimationFrame(animationId);
             return;
@@ -188,6 +194,7 @@ export const dropCoin = ({ x, width }: { x: number; width: number }) => {
  * @param param0.y5 Hand Landmark 5지점의 y좌표
  * @param param0.x17 Hand Landmark 17지점의 x좌표
  * @param param0.y17 Hand Landmark 17지점의 y좌표
+ * @return 지워지는 coin의 좌표
  */
 export const grabCoin = ({
     y0,
@@ -228,14 +235,17 @@ export const grabCoin = ({
                 x5 < x17 &&
                 coinCenterX > x5 * learnerVideo.offsetWidth &&
                 coinCenterX < x17 * learnerVideo.offsetWidth
-            )
+            ) {
                 coin.remove();
-            else if (
+                return { x: coinCenterX, y: coinCenterY };
+            } else if (
                 x17 < x5 &&
                 coinCenterX > x17 * learnerVideo.offsetWidth &&
                 coinCenterX < x5 * learnerVideo.offsetWidth
-            )
+            ) {
                 coin.remove();
+                return { x: coinCenterX, y: coinCenterY };
+            }
         }
     }
 };
@@ -305,7 +315,13 @@ export const printPaw = ({
     const positionX = Number(img.style.left.replace('px', ''));
     const positionY = Number(img.style.top.replace('px', ''));
 
-    if (userType === 'learner') removeCoin({ x: positionX, y: positionY });
+    if (userType === 'learner') {
+        removeCoin({ x: positionX, y: positionY });
+        setTimeout(() => {
+            img.remove();
+        }, 2000);
+        return { x: positionX, y: positionY };
+    }
 
     setTimeout(() => {
         img.remove();

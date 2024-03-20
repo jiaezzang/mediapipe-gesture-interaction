@@ -1,4 +1,3 @@
-import { GestureRecognizerResult } from '@mediapipe/tasks-vision';
 import { atom } from 'jotai';
 
 /** 스트리밍 설정 관련 정의 */

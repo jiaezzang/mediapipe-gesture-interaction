@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Video from './Video';
 
 export default function RemoteVideo({
@@ -12,6 +12,9 @@ export default function RemoteVideo({
     id: 'teacher' | 'learner';
     posture?: TPosture;
 }) {
+    useEffect(() => {
+        console.log(`data 수신 및 type === posture일 때 적절한 함수 실행`);
+    }, []);
     return (
         <div id={`${id}-container`} className='relative h-2/5 overflow-hidden'>
             <Video id={`${id}-video`} videoRef={videoRef} />
