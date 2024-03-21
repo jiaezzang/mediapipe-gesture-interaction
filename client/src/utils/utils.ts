@@ -1,7 +1,13 @@
 import { RefObject } from 'react';
 import coin from '../assets/images/coin.png';
 import metalCat from '../assets/images/metalcat.png';
+import quizO from '../assets/images/quiz_o.png';
+import quizX from '../assets/images/quiz_x.png';
 import { GestureRecognizerResult } from '@mediapipe/tasks-vision';
+import water from '../assets/gif/water.webp';
+import amaizing from '../assets/gif/amazing.webp';
+import heartPop from '../assets/gif/heart_pop.webp';
+import fireWorks from '../assets/gif/fire_works.gif';
 
 //GESTURE RECOGNITION
 /**
@@ -79,13 +85,11 @@ export const makeGestureRecognizer = (
  * @returns 로컬 캔버스에 대한 RefObject를 반환
  */
 export const tossCoin = ({
-    x,
-    y,
+    position,
     ratio,
     imgPositionY,
 }: {
-    x: number;
-    y: number;
+    position: landMarkPosition;
     ratio: number;
     imgPositionY: number;
 }) => {
@@ -112,8 +116,8 @@ export const tossCoin = ({
         remoteCanvas.height = teacherVideo.offsetHeight;
         let animationId: any;
         const rewardSize = Math.round(localCanvas.width * ratio);
-        const positionX = Math.round(localCanvas.width * x);
-        let height = Math.round(localCanvas.height * y);
+        const positionX = Math.round(localCanvas.width * position.x);
+        let height = Math.round(localCanvas.height * position.y);
         /** local Video 영역에서 동전을 떨어뜨리는 애니메이션을 준다. */
         function animate() {
             if (!localCtx || !localCanvas) return;
@@ -123,6 +127,12 @@ export const tossCoin = ({
             height += 8;
 
             if (height > localCanvas.height) {
+                localCtx.clearRect(
+                    positionX,
+                    height - 8,
+                    rewardSize,
+                    rewardSize
+                );
                 dropCoin({ x: positionX, width: rewardSize, imgPositionY });
                 cancelAnimationFrame(animationId);
                 return;
@@ -188,32 +198,33 @@ export const dropCoin = ({
 };
 
 /**
- * 코인의 중앙점이 손바닥 안에 있을 때 코인이 사라지는 효과를 준다.
- * @param param0.y0 Hand Landmark 0지점의 y좌표
- * @param param0.x5 Hand Landmark 5지점의 x좌표
- * @param param0.y5 Hand Landmark 5지점의 y좌표
- * @param param0.x17 Hand Landmark 17지점의 x좌표
- * @param param0.y17 Hand Landmark 17지점의 y좌표
+ * 비디오 위 요소를 집는 모션을 했을 때 효과를 부여한다.
+ * @param param0.pos0 Hand Landmark 0지점의 좌표
+ * @param param0.pos5 Hand Landmark 5지점의 좌표
+ * @param param0.pos17 Hand Landmark 17지점의 좌표
  * @return 지워지는 coin의 좌표
  */
-export const grabCoin = ({
-    y0,
-    x5,
-    y5,
-    x17,
-    y17,
+export const grabObject = ({
+    pos0,
+    pos5,
+    pos17,
 }: {
-    y0: number;
-    x5: number;
-    y5: number;
-    x17: number;
-    y17: number;
+    pos0: landMarkPosition;
+    pos5: landMarkPosition;
+    pos17: landMarkPosition;
 }) => {
     const learnerContainer = document.getElementById(
         'learner-container'
     ) as HTMLDivElement;
     const learnerVideo = document.getElementById('learner-video');
     if (!learnerContainer || !learnerVideo) return;
+    //OX를 선택하는 효과
+    const centerX =
+        ((pos0.x + pos5.x + pos17.x) * learnerContainer.offsetWidth) / 3;
+    const centerY =
+        ((pos0.y + pos5.y + pos17.y) * learnerContainer.offsetHeight) / 3;
+    chooseOX({ x: centerX, y: centerY });
+    //코인이 사라지는 효과
     const coinImg = learnerContainer.getElementsByClassName('coin');
     for (let i = coinImg.length - 1; i >= 0; i--) {
         const coin = coinImg[i] as HTMLImageElement;
@@ -223,25 +234,25 @@ export const grabCoin = ({
         const coinCenterY = coinTop + coin.width / 2;
 
         const highestY =
-            y5 > y17
-                ? y17 * learnerVideo.offsetHeight
-                : y5 * learnerVideo.offsetHeight;
+            pos5.y > pos17.y
+                ? pos17.y * learnerVideo.offsetHeight
+                : pos5.y * learnerVideo.offsetHeight;
 
         if (
             coinCenterY > highestY &&
-            coinCenterY < y0 * learnerVideo.offsetHeight
+            coinCenterY < pos0.y * learnerVideo.offsetHeight
         ) {
             if (
-                x5 < x17 &&
-                coinCenterX > x5 * learnerVideo.offsetWidth &&
-                coinCenterX < x17 * learnerVideo.offsetWidth
+                pos5.x < pos17.x &&
+                coinCenterX > pos5.x * learnerVideo.offsetWidth &&
+                coinCenterX < pos17.x * learnerVideo.offsetWidth
             ) {
                 coin.remove();
                 return { x: coinCenterX, y: coinCenterY };
             } else if (
-                x17 < x5 &&
-                coinCenterX > x17 * learnerVideo.offsetWidth &&
-                coinCenterX < x5 * learnerVideo.offsetWidth
+                pos17.x < pos5.x &&
+                coinCenterX > pos17.x * learnerVideo.offsetWidth &&
+                coinCenterX < pos5.x * learnerVideo.offsetWidth
             ) {
                 coin.remove();
                 return { x: coinCenterX, y: coinCenterY };
@@ -386,6 +397,142 @@ export const drawMetalCat = (userType: string) => {
     animate();
 };
 
+/**
+ * O,X 팻말이미지 요소를 생성하거나 이미 해당 요소가 존재하는 경우 요소를 삭제한다.
+ */
+export const setOX = () => {
+    const learnerContainer = document.getElementById(
+        'learner-container'
+    ) as HTMLDivElement;
+    const oxImg = Array.from(learnerContainer.getElementsByClassName('quiz'));
+    if (oxImg.length > 0) {
+        oxImg.forEach((img) => img.remove());
+    } else {
+        const imgO = new Image();
+        imgO.src = quizO;
+        imgO.width = learnerContainer.offsetWidth / 3;
+        imgO.style.top =
+            (learnerContainer.offsetHeight - imgO.width) / 2 + 'px';
+        imgO.classList.add('absolute', 'quiz-o', 'quiz', 'left-0');
+
+        const imgX = new Image();
+        imgX.src = quizX;
+        imgX.width = learnerContainer.offsetWidth / 3;
+        imgX.style.top =
+            (learnerContainer.offsetHeight - imgX.width) / 2 + 'px';
+        imgX.classList.add('absolute', 'quiz-x', 'quiz', 'right-0');
+
+        learnerContainer.appendChild(imgO);
+        learnerContainer.appendChild(imgX);
+    }
+};
+
+/**
+ * 주어진 x, y 좌표가 특정 이미지 범위 내에 있는지 확인하고, 해당 이미지에 효과를 준다.
+ * @param {Object} param0 좌표 객체
+ * @param {number} param0.x x 좌표값
+ * @param {number} param0.y y 좌표값
+ */
+export const chooseOX = ({ x, y }: { x: number; y: number }) => {
+    const learnerContainer = document.getElementById(
+        'learner-container'
+    ) as HTMLDivElement;
+    const oxImg = Array.from(learnerContainer.getElementsByClassName('quiz'));
+    if (oxImg.length === 0) return;
+    const imgO = oxImg.find((el) =>
+        el.classList.contains('quiz-o')
+    ) as HTMLImageElement;
+    const imgX = oxImg.find((el) =>
+        el.classList.contains('quiz-x')
+    ) as HTMLImageElement;
+
+    const rectO = {
+        left: 0,
+        right: imgO.width,
+        top: (learnerContainer.offsetHeight - imgO.width) / 2,
+        bottom: (learnerContainer.offsetHeight - imgO.width) / 2 + imgO.height,
+    };
+    const rectX = {
+        left: learnerContainer.offsetWidth - imgX.width,
+        right: learnerContainer.offsetWidth,
+        top: (learnerContainer.offsetHeight - imgX.width) / 2,
+        bottom: (learnerContainer.offsetHeight - imgX.width) / 2 + imgX.height,
+    };
+
+    const isInsideO =
+        x >= rectO.left &&
+        x <= rectO.right &&
+        y >= rectO.top &&
+        y <= rectO.bottom;
+    const isInsideX =
+        x >= rectX.left &&
+        x <= rectX.right &&
+        y >= rectX.top &&
+        y <= rectX.bottom;
+
+    if (isInsideO) {
+        imgO.style.opacity = '1';
+        imgX.style.opacity = '0.5';
+    } else if (isInsideX) {
+        imgX.style.opacity = '1';
+        imgO.style.opacity = '0.5';
+    }
+};
+
+/**
+ * userType에 따라 이미지를 생성한다.
+ * @param userType posture를 실행한 사람의 userType
+ */
+export const thumbUp = ({ userType }: { userType: TUser }) => {
+    const container =
+        userType === 'teacher'
+            ? (document.getElementById('learner-container') as HTMLDivElement)
+            : (document.getElementById('teacher-container') as HTMLDivElement);
+    if (!container) return;
+    const prev = container.querySelector('.heartPop');
+    if (prev) return;
+    const gif = new Image();
+    gif.src = userType === 'teacher' ? fireWorks : heartPop;
+    gif.onload = () => {
+        const aspectRatio = gif.height / gif.width;
+        gif.width = container.offsetWidth;
+        gif.height = gif.width * aspectRatio;
+        gif.style.top = (container.offsetHeight - gif.height) / 2 + 'px';
+        gif.classList.add('absolute', 'heartPop');
+
+        container.appendChild(gif);
+    };
+    setTimeout(() => {
+        gif.remove();
+    }, 1100);
+};
+
+/**
+ * learnerContainer에 물폭탄 이미지를 생성한다.
+ */
+export const thumbDown = () => {
+    const container = document.getElementById(
+        'learner-container'
+    ) as HTMLDivElement;
+    if (!container) return;
+    const prev = container.querySelector('.water');
+    if (prev) return;
+    const gif = new Image();
+    gif.src = water;
+    gif.onload = () => {
+        const aspectRatio = gif.height / gif.width;
+        gif.width = container.offsetWidth;
+        gif.height = gif.width * aspectRatio;
+        gif.style.top = (container.offsetHeight - gif.height) / 2 + 'px';
+        gif.classList.add('absolute', 'water');
+
+        container.appendChild(gif);
+    };
+    setTimeout(() => {
+        gif.remove();
+    }, 2800);
+};
+
 //UTILITIES
 /**
  * 두 숫자 사이에 있는 정수 중에 랜덤으로 정수 하나를 반환한다.
@@ -424,4 +571,23 @@ export const createFixedSizeArray = <T>(maxSize: number) => {
     const toArray = () => array;
 
     return { push, toArray };
+};
+
+/**
+ * 세 지점의 중심점을 구한다.
+ * @param 세 점의 좌표
+ * @returns 세 점의 중심점의 좌표
+ */
+export const calculateTriangleCenter = (
+    x0: number,
+    y0: number,
+    x5: number,
+    y5: number,
+    x17: number,
+    y17: number
+) => {
+    const centerX = (x0 + x5 + x17) / 3;
+    const centerY = (y0 + y5 + y17) / 3;
+
+    return { x: centerX, y: centerY };
 };

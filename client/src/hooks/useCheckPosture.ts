@@ -15,9 +15,12 @@ import {
     getLandMarkPosition,
     getRandomElement,
     getRandomInteger,
-    grabCoin,
+    grabObject,
     makeGestureRecognizer,
     printPaw,
+    setOX,
+    thumbDown,
+    thumbUp,
     tossCoin,
 } from '../utils/utils';
 
@@ -87,6 +90,9 @@ export default function useCheckPosture({
         lastWebcamTime = inputVideoRef.current.currentTime;
     };
 
+    /**
+     * 포스쳐 인식에 따른 효과를 부여한다.
+     */
     const updatePostureEffect = ({
         result,
         userType,
@@ -109,13 +115,12 @@ export default function useCheckPosture({
                 data.icon === '🖐️'
             ) {
                 const imgPositionY = getRandomInteger(
-                    Math.round(
-                        (
-                            document.getElementById(
-                                'teacher-video'
-                            ) as HTMLVideoElement
-                        ).width * getLandMarkPosition(result, 5).palmRatio
-                    ),
+                    (
+                        document.getElementById(
+                            'learner-video'
+                        ) as HTMLVideoElement
+                    ).offsetHeight *
+                        (1 / 3),
                     (
                         document.getElementById(
                             'learner-video'
@@ -124,14 +129,10 @@ export default function useCheckPosture({
                         (2 / 3)
                 );
                 tossCoin({
-                    x:
+                    position:
                         data.handedness === 'Left'
-                            ? getLandMarkPosition(result, 5).x
-                            : getLandMarkPosition(result, 17).x,
-                    y:
-                        data.handedness === 'Left'
-                            ? getLandMarkPosition(result, 5).y
-                            : getLandMarkPosition(result, 17).y,
+                            ? getLandMarkPosition(result, 5)
+                            : getLandMarkPosition(result, 17),
                     ratio: getLandMarkPosition(result, 5).palmRatio,
                     imgPositionY,
                 });
@@ -156,18 +157,19 @@ export default function useCheckPosture({
                 prevPosArr[maxSize - 1] === '🖐️' &&
                 data.icon === '✊'
             ) {
-                const coinPosition = grabCoin({
-                    y0: getLandMarkPosition(result, 0).y,
-                    x5: getLandMarkPosition(result, 5).x,
-                    y5: getLandMarkPosition(result, 5).y,
-                    x17: getLandMarkPosition(result, 17).x,
-                    y17: getLandMarkPosition(result, 17).y,
+                grabObject({
+                    pos0: getLandMarkPosition(result, 0),
+                    pos5: getLandMarkPosition(result, 5),
+                    pos17: getLandMarkPosition(result, 17)
                 });
-                if (coinPosition)
-                    setPostureEffect({
-                        effect: 'removeCoin',
-                        props: coinPosition,
-                    });
+                setPostureEffect({
+                    effect: 'grabObject',
+                    props: {
+                        pos0: getLandMarkPosition(result, 0),
+                        pos5: getLandMarkPosition(result, 5),
+                        pos17: getLandMarkPosition(result, 17)
+                    }
+                });
             }
             if (
                 userType === 'teacher' &&
@@ -175,7 +177,8 @@ export default function useCheckPosture({
                 prevPosArr[maxSize - 1] === '✊' &&
                 data.icon === '✌️'
             ) {
-                console.log('ox quiz!!');
+                setOX();
+                setPostureEffect({ effect: 'setOX' });
             }
             if (data.icon === '🤟') {
                 drawMetalCat(userType);
@@ -184,9 +187,17 @@ export default function useCheckPosture({
                     props: { userType },
                 });
             }
+            if (data.icon === '👍') {
+                thumbUp({ userType });
+                setPostureEffect({ effect: 'thumbUp', props: { userType } });
+            }
+            if (userType === 'teacher' && data.icon === '👎') {
+                thumbDown();
+                setPostureEffect({ effect: 'thumbDown' });
+            }
             if (
                 data.icon !== null ||
-                (data.icon === null && prevTime && Date.now() - prevTime >= 700)
+                (data.icon === null && prevTime && Date.now() - prevTime >= 800)
             ) {
                 setPosture(data.icon);
                 prevPosture.push(data.icon);
