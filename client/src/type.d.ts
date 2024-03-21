@@ -15,11 +15,26 @@ type TUser = 'teacher' | 'learner';
 
 /** 포스쳐 효과를 주는 메서드 및 매개변수 타입 */
 type TPostureEffect = {
-    effect: '' | 'drawMetalCat' | 'printPaw' | 'tossCoin' | 'removeCoin';
-    props?: printPawProps | drawMetalCatProps | tossCoinProps | removeCoinProps;
+    effect:
+        | ''
+        | 'drawMetalCat'
+        | 'printPaw'
+        | 'tossCoin'
+        | 'removeCoin'
+        | 'grabObject'
+        | 'setOX'
+        | 'chooseOX'
+        | 'thumbUp'
+        | 'thumbDown';
+    props?:
+        | printPawProps
+        | drawMetalCatProps
+        | tossCoinProps
+        | removeCoinProps
+        | TGrabObjectProps;
 };
 
-/** prinPaw() 애니메이션 메서드의 매개변수 */
+/** prinPaw() 메서드의 매개변수 */
 type TPrintPawProps = {
     x: number;
     y: number;
@@ -27,16 +42,22 @@ type TPrintPawProps = {
     userType: TUser;
     imgSrc: string;
 };
-/** drawMetalCat() 애니메이션 메서드의 매개변수 */
+/** drawMetalCat() 메서드의 매개변수 */
 type TDrawMetalCatProps = { userType: TUser };
-/** tossCoin() 애니메이션 메서드의 매개변수 */
+/** tossCoin() 메서드의 매개변수 */
 type TTossCoinProps = {
     x: number;
     y: number;
     ratio: number;
     imgPositionY: number;
 };
-/** removeCoin() 애니메이션 메서드의 매개변수 */
+/** removeCoin() 메서드의 매개변수 */
 type TRemoveCoinProps = { x: number; y: number };
-/** metalCat() 애니메이션 메서드의 매개변수 */
+/** metalCat() 메서드의 매개변수 */
 type TMetalCatProps = { userType: TUser };
+/** grabObject() 메서드의 매개변수 */
+type TGrabObjectProps = {
+    pos0: landMarkPosition;
+    pos5: landMarkPosition;
+    pos17: landMarkPosition;
+};
