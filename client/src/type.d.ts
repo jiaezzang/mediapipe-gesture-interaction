@@ -13,6 +13,14 @@ type TPosture =
 /** 유저 타입 */
 type TUser = 'teacher' | 'learner';
 
+/** hand landmark 좌표 */
+type landMarkPosition = {
+    x: number;
+    y: number;
+    z: number;
+    palmRatio: number;
+};
+
 /** 포스쳐 효과를 주는 메서드 및 매개변수 타입 */
 type TPostureEffect = {
     effect:
@@ -36,8 +44,7 @@ type TPostureEffect = {
 
 /** prinPaw() 메서드의 매개변수 */
 type TPrintPawProps = {
-    x: number;
-    y: number;
+    position: landMarkPosition;
     ratio: number;
     userType: TUser;
     imgSrc: string;
