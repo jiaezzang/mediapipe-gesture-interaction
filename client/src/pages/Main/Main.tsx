@@ -30,8 +30,6 @@ export default function Main(): JSX.Element {
     const streamingConfig = useAtomValue(streamingConfigAtom);
     const { startPostureRecognizer } = useCheckPosture({
         inputVideoRef: localVideoRef,
-        localCanvasRef: localCanvasRef,
-        remoteCanvasRef: remoteCanvasRef,
     });
 
     const connectPeer = (stream: MediaStream) => {
@@ -104,7 +102,10 @@ export default function Main(): JSX.Element {
         const receiveData = (data: string): void => {
             const parsedData = JSON.parse(data);
 
-            if (parsedData.type === 'video-config') {
+            if (
+                parsedData.type === 'video-config' ||
+                parsedData.type === 'video-config'
+            ) {
                 return;
             }
         };

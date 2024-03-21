@@ -139,14 +139,10 @@ export default function useCheckPosture({
                 setPostureEffect({
                     effect: 'tossCoin',
                     props: {
-                        x:
+                        position:
                             data.handedness === 'Left'
-                                ? getLandMarkPosition(result, 5).x
-                                : getLandMarkPosition(result, 17).x,
-                        y:
-                            data.handedness === 'Left'
-                                ? getLandMarkPosition(result, 5).y
-                                : getLandMarkPosition(result, 17).y,
+                                ? getLandMarkPosition(result, 5)
+                                : getLandMarkPosition(result, 17),
                         ratio: getLandMarkPosition(result, 5).palmRatio,
                         imgPositionY,
                     },
@@ -160,15 +156,15 @@ export default function useCheckPosture({
                 grabObject({
                     pos0: getLandMarkPosition(result, 0),
                     pos5: getLandMarkPosition(result, 5),
-                    pos17: getLandMarkPosition(result, 17)
+                    pos17: getLandMarkPosition(result, 17),
                 });
                 setPostureEffect({
                     effect: 'grabObject',
                     props: {
                         pos0: getLandMarkPosition(result, 0),
                         pos5: getLandMarkPosition(result, 5),
-                        pos17: getLandMarkPosition(result, 17)
-                    }
+                        pos17: getLandMarkPosition(result, 17),
+                    },
                 });
             }
             if (
@@ -181,7 +177,7 @@ export default function useCheckPosture({
                 setPostureEffect({ effect: 'setOX' });
             }
             if (data.icon === '🤟') {
-                drawMetalCat(userType);
+                drawMetalCat({ userType });
                 setPostureEffect({
                     effect: 'drawMetalCat',
                     props: { userType },
@@ -214,9 +210,7 @@ export default function useCheckPosture({
                 const imgSrc = getRandomElement(paw);
 
                 printPaw({
-                    localVideoRef: inputVideoRef,
-                    x: getLandMarkPosition(result, 8).x,
-                    y: getLandMarkPosition(result, 8).y,
+                    position: getLandMarkPosition(result, 8),
                     ratio: getLandMarkPosition(result, 8).palmRatio,
                     userType,
                     imgSrc,
@@ -224,8 +218,7 @@ export default function useCheckPosture({
                 setPostureEffect({
                     effect: 'printPaw',
                     props: {
-                        x: getLandMarkPosition(result, 8).x,
-                        y: getLandMarkPosition(result, 8).y,
+                        position: getLandMarkPosition(result, 8),
                         ratio: getLandMarkPosition(result, 8).palmRatio,
                         userType,
                         imgSrc,

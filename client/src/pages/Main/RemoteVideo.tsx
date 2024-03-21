@@ -1,5 +1,22 @@
 import React, { useEffect } from 'react';
 import Video from './Video';
+import { RTCEvent } from '../../hooks/useSignaling';
+import {
+    chooseOX,
+    drawMetalCat,
+    grabObject,
+    printPaw,
+    removeCoin,
+    setOX,
+    thumbDown,
+    thumbUp,
+    tossCoin,
+} from '../../utils/utils';
+
+type TPostureEffectSignal = {
+    type: 'postureEffect';
+    data: TPostureEffect;
+};
 
 export default function RemoteVideo({
     videoRef,
@@ -12,8 +29,47 @@ export default function RemoteVideo({
     id: 'teacher' | 'learner';
     posture?: TPosture;
 }) {
+    /** RTCEvent 수신 Emit 등록 */
     useEffect(() => {
-        console.log(`data 수신 및 type === posture일 때 적절한 함수 실행`);
+        const handleReceiveData = (receiveData: string): void => {
+            const { type, data } = JSON.parse(receiveData);
+            if (type === 'postureEffect') {
+                switch (data.effect) {
+                    case 'drawMetalCat':
+                        drawMetalCat(data.props);
+                        break;
+                    case 'printPaw':
+                        printPaw(data.props);
+                        break;
+                    case 'tossCoin':
+                        tossCoin(data.props);
+                        break;
+                    case 'removeCoin':
+                        removeCoin(data.props);
+                        break;
+                    case 'grabObject':
+                        grabObject(data.props);
+                        break;
+                    case 'setOX':
+                        setOX();
+                        break;
+                    case 'chooseOX':
+                        chooseOX(data.props);
+                        break;
+                    case 'thumbUp':
+                        thumbUp(data.props);
+                        break;
+                    case 'thumbDown':
+                        thumbDown();
+                        break;
+                }
+            }
+        };
+
+        RTCEvent.on('receive', handleReceiveData);
+        return () => {
+            RTCEvent.off('receive', handleReceiveData);
+        };
     }, []);
     return (
         <div id={`${id}-container`} className='relative h-2/5 overflow-hidden'>

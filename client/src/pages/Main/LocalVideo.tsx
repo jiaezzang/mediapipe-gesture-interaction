@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import Video from './Video';
 import { useAtomValue } from 'jotai';
 import { postureEffectAtom } from '../../atoms';
+import { RTCEvent } from '../../hooks/useSignaling';
 
 export default function LocalVideo({
     videoRef,
@@ -18,8 +19,9 @@ export default function LocalVideo({
 
     /** posture effect가 변경됨을 감지 및 관리한다  */
     useEffect(() => {
-        console.log(
-            `{ type: 'backdrop', data: { remote: backdropImages.local } } 전송`
+        RTCEvent.emit(
+            'send',
+            JSON.stringify({ type: 'postureEffect', data: postureEffect })
         );
     }, [postureEffect]);
     return (

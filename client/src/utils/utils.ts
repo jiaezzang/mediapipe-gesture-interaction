@@ -76,13 +76,9 @@ export const makeGestureRecognizer = (
 // EFFECT
 /**
  * 동전 던지기 효과를 제공한다.
- * @param {Object} param0 - 함수에 전달되는 매개변수 객체
- * @param {RefObject<HTMLCanvasElement>} param0.localCanvasRef - 로컬 캔버스에 대한 RefObject
- * @param {RefObject<HTMLCanvasElement>} param0.remoteCanvasRef - 원격 캔버스에 대한 RefObject
- * @param {number} param0.x - 동전을 던질 X 좌표
- * @param {number} param0.y - 동전을 던질 Y 좌표
+ * @param {Object} param0.position - 동전의 좌표
  * @param {number} param0.ratio - 동전의 크기 비율
- * @returns 로컬 캔버스에 대한 RefObject를 반환
+ * @param {number} param0.imgPositionY - 동전이 떨어지는 위치
  */
 export const tossCoin = ({
     position,
@@ -286,29 +282,23 @@ export const removeCoin = ({ x, y }: { x: number; y: number }) => {
 /**
  * 발자국을 찍는 효과를 준다.
  * @param {Object} param0 - 함수에 전달되는 매개변수 객체
- * @param {RefObject<HTMLCanvasElement>} param0.localCanvasRef - 로컬 캔버스에 대한 RefObject
- * @param {number} param0.x - 발자국을 찍을 X 좌표
- * @param {number} param0.y - 발자국을 찍을 Y 좌표
+ * @param {number} param0.position - 발자국을 찍을 좌표
  * @param {number} param0.ratio - 발자국의 크기 비율
  * @param {string} param0.usrType - 유저 타입
  * @param {string} param0.imgSrc - 발자국 이미지 경로
  */
 export const printPaw = ({
-    localVideoRef,
-    x,
-    y,
+    position,
     ratio,
     userType,
     imgSrc,
 }: {
-    localVideoRef: RefObject<HTMLVideoElement>;
-    x: number;
-    y: number;
+    position: landMarkPosition;
     ratio: number;
     userType: string;
     imgSrc: string;
 }) => {
-    const localVideo = localVideoRef.current;
+    const localVideo = document.getElementById(`${userType}-video`);
     const localContainer = document.getElementById(`${userType}-container`);
     if (!localContainer || !localVideo) return;
 
@@ -318,9 +308,9 @@ export const printPaw = ({
     img.height = (Math.round(localVideo.offsetWidth * ratio) * 2) / 3;
     img.classList.add('paw', 'absolute');
     img.style.left =
-        Math.round(localVideo.offsetWidth * x) - img.width / 2 + 'px';
+        Math.round(localVideo.offsetWidth * position.x) - img.width / 2 + 'px';
     img.style.top =
-        Math.round(localVideo.offsetHeight * y) - img.width / 2 + 'px';
+        Math.round(localVideo.offsetHeight * position.y) - img.width / 2 + 'px';
     localContainer.appendChild(img);
 
     const positionX = Number(img.style.left.replace('px', ''));
@@ -328,6 +318,7 @@ export const printPaw = ({
 
     if (userType === 'learner') {
         removeCoin({ x: positionX, y: positionY });
+        chooseOX({ x: positionX, y: positionY });
         setTimeout(() => {
             img.remove();
         }, 2000);
@@ -343,7 +334,7 @@ export const printPaw = ({
  * 락앤롤 제스쳐를 한 고양이 손을 그린다.
  * @param {RefObject<HTMLCanvasElement>} param0.localCanvasRef - 로컬 캔버스에 대한 RefObject
  */
-export const drawMetalCat = (userType: string) => {
+export const drawMetalCat = ({ userType }: { userType: TUser }) => {
     const container = document.getElementById(`${userType}-container`);
     const video = document.getElementById(
         `${userType}-video`
@@ -352,7 +343,7 @@ export const drawMetalCat = (userType: string) => {
 
     const imgSize = Math.round(video.offsetWidth / 3);
 
-    let animationId: any;
+    let animationId: number;
     let height = video.offsetHeight + imgSize;
     let checkPoint = false;
     const animate = () => {
@@ -379,6 +370,7 @@ export const drawMetalCat = (userType: string) => {
         if (checkPoint) {
             height += 8;
             if (height >= video.offsetHeight + imgSize) {
+                img.remove();
                 cancelAnimationFrame(animationId);
                 return;
             }
