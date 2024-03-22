@@ -10,6 +10,7 @@ import {
 import useCheckPosture from '../../hooks/useCheckPosture';
 import LocalVideo from './LocalVideo';
 import RemoteVideo from './RemoteVideo';
+import clsx from 'clsx';
 
 /**
  * 비디오 콘텐츠가 있는 메인 컴포넌트
@@ -121,7 +122,14 @@ export default function Main(): JSX.Element {
     }, [userType]);
 
     return (
-        <div className='top-container relative w-full h-screen bg-green-100'>
+        <div
+            className={clsx(
+                'top-container relative w-full h-screen',
+                userType === 'teacher'
+                    ? 'bg-green-100'
+                    : 'bg-[navy] bg-opacity-20'
+            )}
+        >
             <main className='flex items-center h-full rounded m-auto gap-3 mb-5 mx-[32px]'>
                 <div className='flex flex-col flex-[1] h-full gap-3 justify-center items-center py-4'>
                     {userType === 'teacher' ? (

@@ -27,7 +27,7 @@ export default function LocalVideo({
     return (
         <div
             id={`${id}-container`}
-            className='relative aspect-w-3 aspect-h-2 overflow-hidden max-w-screen-md m-2'
+            className='relative aspect-w-3 aspect-h-2 overflow-hidden max-w-screen-md m-2 rounded-3xl shadow-xl border-4 border-[hotpink]'
         >
             <Video id={`${id}-video`} videoRef={videoRef} />
             <canvas

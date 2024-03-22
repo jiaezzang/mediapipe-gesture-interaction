@@ -75,7 +75,7 @@ export default function RemoteVideo({
     return (
         <div
             id={`${id}-container`}
-            className='relative aspect-w-3 aspect-h-2 overflow-hidden max-w-screen-md m-2'
+            className='relative aspect-w-3 aspect-h-2 overflow-hidden max-w-screen-md m-2 rounded-3xl shadow-xl'
         >
             <Video id={`${id}-video`} videoRef={videoRef} />
             <canvas
