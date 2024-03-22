@@ -97,13 +97,10 @@ export const tossCoin = ({
     ) as HTMLCanvasElement;
     const teacherVideo = document.getElementById('teacher-video');
     if (!localCanvas || !remoteCanvas || !teacherVideo) return;
-
     const localCtx = localCanvas.getContext('2d');
     if (!localCtx) return;
-
     const img = new Image();
     img.src = coin;
-
     img.onload = () => {
         localCanvas.width = teacherVideo.offsetWidth;
         localCanvas.height = teacherVideo.offsetHeight;
@@ -118,9 +115,7 @@ export const tossCoin = ({
             if (!localCtx || !localCanvas) return;
             localCtx.clearRect(positionX, height - 8, rewardSize, rewardSize);
             localCtx.drawImage(img, positionX, height, rewardSize, rewardSize);
-
             height += 8;
-
             if (height > localCanvas.height) {
                 localCtx.clearRect(
                     positionX,
@@ -132,10 +127,8 @@ export const tossCoin = ({
                 cancelAnimationFrame(animationId);
                 return;
             }
-
             animationId = requestAnimationFrame(animate);
         };
-
         animate();
     };
 };
@@ -156,7 +149,6 @@ export const dropCoin = ({
 }) => {
     const learnerContainer = document.getElementById('learner-container');
     const learnerVideo = document.getElementById('learner-video');
-
     let animationId: any;
     let height = 0;
     const animate = () => {
@@ -185,7 +177,6 @@ export const dropCoin = ({
             cancelAnimationFrame(animationId);
             return;
         }
-
         animationId = requestAnimationFrame(animate);
     };
 
@@ -232,7 +223,6 @@ export const grabObject = ({
             pos5.y > pos17.y
                 ? pos17.y * learnerVideo.offsetHeight
                 : pos5.y * learnerVideo.offsetHeight;
-
         if (
             coinCenterY > highestY &&
             coinCenterY < pos0.y * learnerVideo.offsetHeight
@@ -314,7 +304,6 @@ export const printPaw = ({
 
     const positionX = Number(img.style.left.replace('px', ''));
     const positionY = Number(img.style.top.replace('px', ''));
-
     if (userType === 'learner') {
         removeCoin({ x: positionX, y: positionY });
         chooseOX({ x: positionX, y: positionY });
@@ -323,7 +312,6 @@ export const printPaw = ({
         }, 2000);
         return { x: positionX, y: positionY };
     }
-
     setTimeout(() => {
         img.remove();
     }, 2000);
@@ -339,9 +327,7 @@ export const drawMetalCat = ({ userType }: { userType: TUser }) => {
         `${userType}-video`
     ) as HTMLVideoElement;
     if (!container || !video) return;
-
     const imgSize = Math.round(video.offsetWidth / 3);
-
     let animationId: number;
     let height = video.offsetHeight + imgSize;
     let checkPoint = false;
@@ -356,7 +342,6 @@ export const drawMetalCat = ({ userType }: { userType: TUser }) => {
             const el = drawingElement[i];
             container.removeChild(el);
         }
-
         const img = new Image();
         img.src = metalCat;
         img.width = imgSize;
@@ -365,7 +350,6 @@ export const drawMetalCat = ({ userType }: { userType: TUser }) => {
         img.style.left = '0px';
         img.style.top = height + 'px';
         container.appendChild(img);
-
         if (checkPoint) {
             height += 8;
             if (height >= video.offsetHeight + imgSize) {
@@ -384,7 +368,6 @@ export const drawMetalCat = ({ userType }: { userType: TUser }) => {
         }
         animationId = requestAnimationFrame(animate);
     };
-
     animate();
 };
 
@@ -405,14 +388,12 @@ export const setOX = () => {
         imgO.style.top =
             (learnerContainer.offsetHeight - imgO.width) / 2 + 'px';
         imgO.classList.add('absolute', 'quiz-o', 'quiz', 'left-0');
-
         const imgX = new Image();
         imgX.src = quizX;
         imgX.width = learnerContainer.offsetWidth / 3;
         imgX.style.top =
             (learnerContainer.offsetHeight - imgX.width) / 2 + 'px';
         imgX.classList.add('absolute', 'quiz-x', 'quiz', 'right-0');
-
         learnerContainer.appendChild(imgO);
         learnerContainer.appendChild(imgX);
     }
@@ -436,7 +417,6 @@ export const chooseOX = ({ x, y }: { x: number; y: number }) => {
     const imgX = oxImg.find((el) =>
         el.classList.contains('quiz-x')
     ) as HTMLImageElement;
-
     const rectO = {
         left: 0,
         right: imgO.width,
@@ -449,7 +429,6 @@ export const chooseOX = ({ x, y }: { x: number; y: number }) => {
         top: (learnerContainer.offsetHeight - imgX.width) / 2,
         bottom: (learnerContainer.offsetHeight - imgX.width) / 2 + imgX.height,
     };
-
     const isInsideO =
         x >= rectO.left &&
         x <= rectO.right &&
@@ -460,7 +439,6 @@ export const chooseOX = ({ x, y }: { x: number; y: number }) => {
         x <= rectX.right &&
         y >= rectX.top &&
         y <= rectX.bottom;
-
     if (isInsideO) {
         imgO.style.opacity = '1';
         imgX.style.opacity = '0.5';

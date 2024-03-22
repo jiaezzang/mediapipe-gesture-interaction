@@ -43,7 +43,6 @@ export const createFixedSizeArray = <T>(maxSize: number) => {
         }
         array.push(item);
     };
-
     const toArray = () => array;
 
     return { push, toArray };
@@ -105,12 +104,10 @@ export const spriteAnimation = ({
         let repeatCounter = 0; // 반복 횟수를 추적하기 위한 변수 추가
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             const _row = Math.floor(frame / col);
             const _col = frame % col;
             const sx = _col * frameWidth;
             const sy = _row * frameHeight;
-
             ctx.drawImage(
                 sprite,
                 sx,
@@ -141,7 +138,6 @@ export const spriteAnimation = ({
             }
             animationId = requestAnimationFrame(animate);
         };
-
         animate();
     };
 };
