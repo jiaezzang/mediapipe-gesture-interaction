@@ -30,7 +30,6 @@ export default function useSignaling(peerConnection?: RTCPeerConnection) {
         if (!peerConnection) return;
         console.log('OPEN RTC!!');
         ws.current = new WebSocket('ws://localhost:3000');
-        // ws.current = new WebSocket('ws://192.1.31.79:3000/');
         ws.current.addEventListener('open', () => {
             // 시그널링 서버에 로컬 스트림 정보 전송
             sendSignal({ type: 'newStream', data: { stream: true } });
