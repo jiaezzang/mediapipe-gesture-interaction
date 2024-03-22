@@ -6,7 +6,6 @@ import { GestureRecognizerResult } from '@mediapipe/tasks-vision';
 import water from '../assets/sprite/water.png';
 import amaizing from '../assets/sprite/amazing.png';
 import heartPop from '../assets/sprite/heart_pop.png';
-import fireWorks from '../assets/sprite/fire_works.png';
 import { spriteAnimation } from './utils';
 
 //GESTURE RECOGNITION
@@ -458,11 +457,12 @@ export const thumbUp = ({ userType }: { userType: TUser }) => {
             ? (document.getElementById('learner-canvas') as HTMLCanvasElement)
             : (document.getElementById('teacher-canvas') as HTMLCanvasElement);
     if (!canvas) return;
-    const imgSrc = userType === 'teacher' ? fireWorks : heartPop;
-    const row = userType === 'teacher' ? 7 : 8;
+    const imgSrc = userType === 'teacher' ? amaizing : heartPop;
+    const row = userType === 'teacher' ? 5 : 8;
     const col = 5;
-    const repeatCount = 2;
-    spriteAnimation({ canvas, imgSrc, row, col, repeatCount });
+    const frameCount = userType === 'teacher' ? 24 : 40;
+    const repeatCount = userType === 'teacher' ? 3 : 2;
+    spriteAnimation({ canvas, imgSrc, row, col, frameCount, repeatCount });
 };
 
 /**
@@ -475,6 +475,7 @@ export const thumbDown = () => {
     const imgSrc = water;
     const row = 20;
     const col = 5;
+    const frameCount = 100;
     const repeatCount = 1;
-    spriteAnimation({ canvas, imgSrc, row, col, repeatCount });
+    spriteAnimation({ canvas, imgSrc, row, col, frameCount, repeatCount });
 };
