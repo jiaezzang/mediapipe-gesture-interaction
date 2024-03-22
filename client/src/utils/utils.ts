@@ -73,6 +73,7 @@ export const calculateTriangleCenter = (
  * @param param0.imgSrc sprite 이미지의 경로
  * @param param0.row sprite 이미지의 행
  * @param param0.col sprite 이미지의 열
+ * @param param0.frameCount sprite animation의 총 프레임 수
  * @param param0.repeatCount sprite animation을 반복 실행할 횟수
  */
 export const spriteAnimation = ({
@@ -80,12 +81,14 @@ export const spriteAnimation = ({
     imgSrc,
     row,
     col,
+    frameCount,
     repeatCount,
 }: {
     canvas: HTMLCanvasElement;
     imgSrc: string;
     row: number;
     col: number;
+    frameCount: number;
     repeatCount: number;
 }) => {
     const sprite = new Image();
@@ -97,7 +100,6 @@ export const spriteAnimation = ({
         const frameWidth = sprite.width / col;
         const frameHeight = sprite.height / row;
         const ratio = frameHeight / frameWidth;
-        const frameCount = row * col;
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
         let frame = 0;
