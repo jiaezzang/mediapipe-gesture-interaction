@@ -123,7 +123,7 @@ export default function Main(): JSX.Element {
     return (
         <div className='top-container relative w-full h-screen bg-green-100'>
             <main className='flex items-center h-full rounded m-auto gap-3 mb-5 mx-[32px]'>
-                <div className='flex flex-col flex-[1] h-full gap-3 justify-center items-center'>
+                <div className='flex flex-col flex-[1] h-full gap-3 justify-center items-center py-4'>
                     {userType === 'teacher' ? (
                         <>
                             <LocalVideo

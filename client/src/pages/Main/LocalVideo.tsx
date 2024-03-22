@@ -25,7 +25,10 @@ export default function LocalVideo({
         );
     }, [postureEffect]);
     return (
-        <div id={`${id}-container`} className='relative h-2/5 overflow-hidden'>
+        <div
+            id={`${id}-container`}
+            className='relative aspect-w-3 aspect-h-2 overflow-hidden max-w-screen-md m-2'
+        >
             <Video id={`${id}-video`} videoRef={videoRef} />
             <canvas
                 id={`${id}-canvas`}
