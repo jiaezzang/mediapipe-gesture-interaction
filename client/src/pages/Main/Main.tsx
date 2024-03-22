@@ -104,7 +104,7 @@ export default function Main(): JSX.Element {
 
             if (
                 parsedData.type === 'video-config' ||
-                parsedData.type === 'video-config'
+                parsedData.type === 'posture-effect'
             ) {
                 return;
             }

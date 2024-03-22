@@ -33,7 +33,7 @@ export default function RemoteVideo({
     useEffect(() => {
         const handleReceiveData = (receiveData: string): void => {
             const { type, data } = JSON.parse(receiveData);
-            if (type === 'postureEffect') {
+            if (type === 'posture-effect') {
                 switch (data.effect) {
                     case 'drawMetalCat':
                         drawMetalCat(data.props);

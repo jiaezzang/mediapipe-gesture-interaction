@@ -21,7 +21,7 @@ export default function LocalVideo({
     useEffect(() => {
         RTCEvent.emit(
             'send',
-            JSON.stringify({ type: 'postureEffect', data: postureEffect })
+            JSON.stringify({ type: 'posture-effect', data: postureEffect })
         );
     }, [postureEffect]);
     return (
