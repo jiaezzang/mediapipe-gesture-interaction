@@ -14,7 +14,7 @@ import {
 } from '../../utils/posture';
 
 type TPostureEffectSignal = {
-    type: 'postureEffect';
+    type: 'posture-effect';
     data: TPostureEffect;
 };
 
@@ -32,7 +32,8 @@ export default function RemoteVideo({
     /** RTCEvent 수신 Emit 등록 */
     useEffect(() => {
         const handleReceiveData = (receiveData: string): void => {
-            const { type, data } = JSON.parse(receiveData);
+            const { type, data }: TPostureEffectSignal =
+                JSON.parse(receiveData);
             if (type === 'posture-effect') {
                 switch (data.effect) {
                     case 'drawMetalCat':
