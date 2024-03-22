@@ -11,7 +11,7 @@ import {
     thumbDown,
     thumbUp,
     tossCoin,
-} from '../../utils/utils';
+} from '../../utils/posture';
 
 type TPostureEffectSignal = {
     type: 'postureEffect';
