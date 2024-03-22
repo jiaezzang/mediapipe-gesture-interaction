@@ -1,13 +1,13 @@
-import { RefObject } from 'react';
 import coin from '../assets/images/coin.png';
 import metalCat from '../assets/images/metalcat.png';
 import quizO from '../assets/images/quiz_o.png';
 import quizX from '../assets/images/quiz_x.png';
 import { GestureRecognizerResult } from '@mediapipe/tasks-vision';
-import water from '../assets/gif/water.webp';
-import amaizing from '../assets/gif/amazing.webp';
-import heartPop from '../assets/gif/heart_pop.webp';
-import fireWorks from '../assets/gif/fire_works.gif';
+import water from '../assets/sprite/water.png';
+import amaizing from '../assets/sprite/amazing.png';
+import heartPop from '../assets/sprite/heart_pop.png';
+import fireWorks from '../assets/sprite/fire_works.png';
+import { spriteAnimation } from './utils';
 
 //GESTURE RECOGNITION
 /**
@@ -99,8 +99,7 @@ export const tossCoin = ({
     if (!localCanvas || !remoteCanvas || !teacherVideo) return;
 
     const localCtx = localCanvas.getContext('2d');
-    const remoteCtx = remoteCanvas.getContext('2d');
-    if (!localCtx || !remoteCtx) return;
+    if (!localCtx) return;
 
     const img = new Image();
     img.src = coin;
@@ -115,7 +114,7 @@ export const tossCoin = ({
         const positionX = Math.round(localCanvas.width * position.x);
         let height = Math.round(localCanvas.height * position.y);
         /** local Video 영역에서 동전을 떨어뜨리는 애니메이션을 준다. */
-        function animate() {
+        const animate = () => {
             if (!localCtx || !localCanvas) return;
             localCtx.clearRect(positionX, height - 8, rewardSize, rewardSize);
             localCtx.drawImage(img, positionX, height, rewardSize, rewardSize);
@@ -135,7 +134,7 @@ export const tossCoin = ({
             }
 
             animationId = requestAnimationFrame(animate);
-        }
+        };
 
         animate();
     };
@@ -472,55 +471,32 @@ export const chooseOX = ({ x, y }: { x: number; y: number }) => {
 };
 
 /**
- * userType에 따라 이미지를 생성한다.
+ * userType에 따른 애니메이션을 생성한다.
  * @param userType posture를 실행한 사람의 userType
  */
 export const thumbUp = ({ userType }: { userType: TUser }) => {
-    const container =
+    const canvas =
         userType === 'teacher'
-            ? (document.getElementById('learner-container') as HTMLDivElement)
-            : (document.getElementById('teacher-container') as HTMLDivElement);
-    if (!container) return;
-    const prev = container.querySelector('.heartPop');
-    if (prev) return;
-    const gif = new Image();
-    gif.src = userType === 'teacher' ? fireWorks : heartPop;
-    gif.onload = () => {
-        const aspectRatio = gif.height / gif.width;
-        gif.width = container.offsetWidth;
-        gif.height = gif.width * aspectRatio;
-        gif.style.top = (container.offsetHeight - gif.height) / 2 + 'px';
-        gif.classList.add('absolute', 'heartPop');
-
-        container.appendChild(gif);
-    };
-    setTimeout(() => {
-        gif.remove();
-    }, 1100);
+            ? (document.getElementById('learner-canvas') as HTMLCanvasElement)
+            : (document.getElementById('teacher-canvas') as HTMLCanvasElement);
+    if (!canvas) return;
+    const imgSrc = userType === 'teacher' ? fireWorks : heartPop;
+    const row = userType === 'teacher' ? 7 : 8;
+    const col = 5;
+    const repeatCount = 2;
+    spriteAnimation({ canvas, imgSrc, row, col, repeatCount });
 };
 
 /**
- * learnerContainer에 물폭탄 이미지를 생성한다.
+ * learner Canvas에 물폭탄 애니메이션을 생성한다.
  */
 export const thumbDown = () => {
-    const container = document.getElementById(
-        'learner-container'
-    ) as HTMLDivElement;
-    if (!container) return;
-    const prev = container.querySelector('.water');
-    if (prev) return;
-    const gif = new Image();
-    gif.src = water;
-    gif.onload = () => {
-        const aspectRatio = gif.height / gif.width;
-        gif.width = container.offsetWidth;
-        gif.height = gif.width * aspectRatio;
-        gif.style.top = (container.offsetHeight - gif.height) / 2 + 'px';
-        gif.classList.add('absolute', 'water');
-
-        container.appendChild(gif);
-    };
-    setTimeout(() => {
-        gif.remove();
-    }, 2800);
+    const canvas = document.getElementById(
+        'learner-canvas'
+    ) as HTMLCanvasElement;
+    const imgSrc = water;
+    const row = 20;
+    const col = 5;
+    const repeatCount = 1;
+    spriteAnimation({ canvas, imgSrc, row, col, repeatCount });
 };
