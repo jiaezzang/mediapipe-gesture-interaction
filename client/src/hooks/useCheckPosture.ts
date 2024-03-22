@@ -12,7 +12,7 @@ import { postureAtom, postureEffectAtom } from '../atoms';
 import {
     createFixedSizeArray,
     getRandomElement,
-    getRandomInteger,
+    getRandomNumber,
 } from '../utils/utils';
 import {
     getLandMarkPosition,
@@ -116,20 +116,7 @@ export default function useCheckPosture({
                 prevPosArr[maxSize - 1] === '✊' &&
                 data.icon === '🖐️'
             ) {
-                const imgPositionY = getRandomInteger(
-                    (
-                        document.getElementById(
-                            'learner-video'
-                        ) as HTMLVideoElement
-                    ).offsetHeight *
-                        (1 / 3),
-                    (
-                        document.getElementById(
-                            'learner-video'
-                        ) as HTMLVideoElement
-                    ).offsetHeight *
-                        (2 / 3)
-                );
+                const imgPositionY = getRandomNumber(0.25, 0.5);
                 tossCoin({
                     position:
                         data.handedness === 'Left'

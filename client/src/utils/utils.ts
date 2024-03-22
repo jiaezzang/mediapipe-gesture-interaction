@@ -5,8 +5,19 @@
  * @param max 최대값
  * @returns 최소값과 최대값 사이에서 랜덤하게 뽑은 정수
  */
-export const getRandomInteger = (min: number, max: number) => {
+export const getRandomInteger = (min: number, max: number): number => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+/**
+ * 두 숫자 사이에 있는 수 중에 랜덤으로 소수점 2자리 수 하나를 반환한다.
+ * @param min 최소값
+ * @param max 최대값
+ * @returns 최소값과 최대값 사이에서 랜덤하게 뽑은 소수점 2자리 수
+ */
+export const getRandomNumber = (min: number, max: number): number => {
+    const random = Math.random() * (max - min) + min;
+    return Math.round(random * 100) / 100; // 소수점 2자리까지만 남기기 위해 100을 곱하고 다시 나눔
 };
 
 /**

@@ -180,7 +180,7 @@ export const dropCoin = ({
         img.style.top = height + 'px';
         learnerContainer.appendChild(img);
         height += 8;
-        if (height > learnerVideo.offsetHeight - imgPositionY) {
+        if (height > learnerVideo.offsetHeight * imgPositionY) {
             img.classList.remove('drawing');
             cancelAnimationFrame(animationId);
             return;
