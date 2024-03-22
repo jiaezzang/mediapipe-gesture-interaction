@@ -32,7 +32,12 @@ let prevZ: number;
 let prevCore: number;
 const maxSize = 2;
 const prevPosture = createFixedSizeArray<TPosture>(maxSize);
+const prevGamePosture = {
+    left: createFixedSizeArray<TPosture>(maxSize),
+    right: createFixedSizeArray<TPosture>(maxSize),
+};
 let prevTime: number;
+let gameMode: boolean = false;
 
 export default function useCheckPosture({
     inputVideoRef,
@@ -55,7 +60,6 @@ export default function useCheckPosture({
                     modelAssetPath:
                         'https://storage.googleapis.com/mediapipe-tasks/gesture_recognizer/gesture_recognizer.task',
                 },
-                numHands: 2,
                 cannedGesturesClassifierOptions: {
                     categoryAllowlist: [
                         'Closed_Fist',
@@ -78,7 +82,10 @@ export default function useCheckPosture({
         if (!inputVideoRef.current) return;
         if (runningMode === 'none') {
             runningMode = 'VIDEO';
-            (await gestureRecognizer).setOptions({ runningMode: 'VIDEO' });
+            (await gestureRecognizer).setOptions({
+                runningMode: 'VIDEO',
+                numHands: 2,
+            });
         }
         if (inputVideoRef.current.currentTime !== lastWebcamTime) {
             const result = (await gestureRecognizer).recognizeForVideo(
@@ -110,9 +117,11 @@ export default function useCheckPosture({
             return;
         }
         const data = makeGestureRecognizer(result);
+        if (gameMode) console.log('gameStart');
         if (prevPosArr[maxSize - 1] !== data.icon) {
             if (
                 userType === 'teacher' &&
+                !gameMode &&
                 prevPosArr[maxSize - 1] === '✊' &&
                 data.icon === '🖐️'
             ) {
@@ -165,6 +174,13 @@ export default function useCheckPosture({
                 setOX();
                 setPostureEffect({ effect: 'setOX' });
             }
+            if (
+                userType === 'teacher' &&
+                prevPosArr[maxSize - 2] === '✊' &&
+                prevPosArr[maxSize - 1] === '✌️' &&
+                data.icon === '🖐️'
+            )
+                gameMode = !gameMode;
             if (data.icon === '🤟') {
                 drawMetalCat({ userType });
                 setPostureEffect({
