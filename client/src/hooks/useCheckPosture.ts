@@ -11,10 +11,12 @@ import { RefObject, useMemo } from 'react';
 import { postureAtom, postureEffectAtom } from '../atoms';
 import {
     createFixedSizeArray,
-    drawMetalCat,
-    getLandMarkPosition,
     getRandomElement,
     getRandomInteger,
+} from '../utils/utils';
+import {
+    getLandMarkPosition,
+    drawMetalCat,
     grabObject,
     makeGestureRecognizer,
     printPaw,
@@ -22,7 +24,7 @@ import {
     thumbDown,
     thumbUp,
     tossCoin,
-} from '../utils/utils';
+} from '../utils/posture';
 
 let lastWebcamTime = -1;
 let runningMode: string = 'none';
