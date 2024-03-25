@@ -53,8 +53,8 @@ type TPrintPawProps = {
 type TDrawMetalCatProps = { userType: TUser };
 /** tossCoin() 메서드의 매개변수 */
 type TTossCoinProps = {
-    x: number;
-    y: number;
+    id: string;
+    position: landMarkPosition;
     ratio: number;
     imgPositionY: number;
 };

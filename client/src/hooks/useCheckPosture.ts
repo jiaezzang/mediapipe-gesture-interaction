@@ -25,6 +25,7 @@ import {
     thumbUp,
     tossCoin,
 } from '../utils/posture';
+import uuid from 'react-uuid';
 
 let lastWebcamTime = -1;
 let runningMode: string = 'none';
@@ -117,7 +118,9 @@ export default function useCheckPosture({
                 data.icon === '🖐️'
             ) {
                 const imgPositionY = getRandomNumber(0.25, 0.5);
+                const id = uuid();
                 tossCoin({
+                    id,
                     position:
                         data.handedness === 'Left'
                             ? getLandMarkPosition(result, 5)
@@ -128,6 +131,7 @@ export default function useCheckPosture({
                 setPostureEffect({
                     effect: 'tossCoin',
                     props: {
+                        id,
                         position:
                             data.handedness === 'Left'
                                 ? getLandMarkPosition(result, 5)

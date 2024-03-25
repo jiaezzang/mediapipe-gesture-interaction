@@ -80,10 +80,12 @@ export const makeGestureRecognizer = (
  * @param {number} param0.imgPositionY - 동전이 떨어지는 위치
  */
 export const tossCoin = ({
+    id,
     position,
     ratio,
     imgPositionY,
 }: {
+    id: string;
     position: landMarkPosition;
     ratio: number;
     imgPositionY: number;
@@ -122,7 +124,7 @@ export const tossCoin = ({
                     rewardSize,
                     rewardSize
                 );
-                dropCoin({ x: positionX, width: rewardSize, imgPositionY });
+                dropCoin({ id, x: positionX, width: rewardSize, imgPositionY });
                 cancelAnimationFrame(animationId);
                 return;
             }
@@ -138,38 +140,43 @@ export const tossCoin = ({
  * @param {number} param0.width - 동전의 사이즈
  */
 export const dropCoin = ({
+    id,
     x,
     width,
     imgPositionY,
 }: {
+    id: string;
     x: number;
     width: number;
     imgPositionY: number;
 }) => {
     const learnerContainer = document.getElementById('learner-container');
     const learnerVideo = document.getElementById('learner-video');
+    if (!learnerContainer || !learnerVideo) return;
     let animationId: any;
     let height = 0;
+    const img = new Image();
+    img.id = id;
+    img.src = coin;
+    img.width = width;
+    img.height = width;
+    img.classList.add(`coin`, `absolute`);
+    img.style.left = x + 'px';
+    img.style.top = 0 + 'px';
+    learnerContainer.appendChild(img);
     const animate = () => {
-        if (!learnerContainer || !learnerVideo) return;
-        const coinElements = Array.from(
-            learnerContainer.getElementsByClassName('coin')
-        );
-        const drawingElement = coinElements.filter((el) =>
-            el.classList.contains('drawing')
-        );
-        for (let i = drawingElement.length - 1; i >= 0; i--) {
-            const el = drawingElement[i];
-            learnerContainer.removeChild(el);
-        }
-        const img = new Image();
-        img.src = coin;
-        img.width = width;
-        img.height = width;
-        img.classList.add(`drawing`, `coin`, `absolute`);
-        img.style.left = x + 'px';
-        img.style.top = height + 'px';
-        learnerContainer.appendChild(img);
+        const coinEl = document.getElementById(id) as HTMLImageElement;
+        coinEl.style.top = height + 'px';
+        // const coinElements = Array.from(
+        //     learnerContainer.getElementsByClassName('coin')
+        // );
+        // const drawingElement = coinElements.filter((el) =>
+        //     el.classList.contains('drawing')
+        // );
+        // for (let i = drawingElement.length - 1; i >= 0; i--) {
+        //     const el = drawingElement[i];
+        //     learnerContainer.removeChild(el);
+        // }
         height += 8;
         if (height > learnerVideo.offsetHeight * imgPositionY) {
             img.classList.remove('drawing');
@@ -217,7 +224,6 @@ export const grabObject = ({
         const coinTop = Number(coin.style.top.replace('px', ''));
         const coinCenterX = coinLeft + coin.width / 2;
         const coinCenterY = coinTop + coin.width / 2;
-
         const highestY =
             pos5.y > pos17.y
                 ? pos17.y * learnerVideo.offsetHeight
@@ -227,19 +233,14 @@ export const grabObject = ({
             coinCenterY < pos0.y * learnerVideo.offsetHeight
         ) {
             if (
-                pos5.x < pos17.x &&
-                coinCenterX > pos5.x * learnerVideo.offsetWidth &&
-                coinCenterX < pos17.x * learnerVideo.offsetWidth
+                (pos5.x < pos17.x &&
+                    coinCenterX > pos5.x * learnerVideo.offsetWidth &&
+                    coinCenterX < pos17.x * learnerVideo.offsetWidth) ||
+                (pos17.x < pos5.x &&
+                    coinCenterX > pos17.x * learnerVideo.offsetWidth &&
+                    coinCenterX < pos5.x * learnerVideo.offsetWidth)
             ) {
-                coin.remove();
-                return { x: coinCenterX, y: coinCenterY };
-            } else if (
-                pos17.x < pos5.x &&
-                coinCenterX > pos17.x * learnerVideo.offsetWidth &&
-                coinCenterX < pos5.x * learnerVideo.offsetWidth
-            ) {
-                coin.remove();
-                return { x: coinCenterX, y: coinCenterY };
+                document.getElementById(coin.id)?.remove();
             }
         }
     }
@@ -262,7 +263,7 @@ export const removeCoin = ({ x, y }: { x: number; y: number }) => {
         const xRange = x > left && x < left + coin.width;
         const yRange = y > top && y < top + coin.height;
         if (xRange && yRange) {
-            coin.remove();
+            document.getElementById(coin.id)?.remove();
         }
     }
 };
