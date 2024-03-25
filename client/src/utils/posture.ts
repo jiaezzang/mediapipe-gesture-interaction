@@ -4,7 +4,7 @@ import quizO from '../assets/images/quiz_o.png';
 import quizX from '../assets/images/quiz_x.png';
 import { GestureRecognizerResult } from '@mediapipe/tasks-vision';
 import water from '../assets/sprite/water.png';
-import amaizing from '../assets/sprite/amazing.png';
+import amazing from '../assets/sprite/amazing.png';
 import heartPop from '../assets/sprite/heart_pop.png';
 import { spriteAnimation } from './utils';
 
@@ -457,7 +457,7 @@ export const thumbUp = ({ userType }: { userType: TUser }) => {
             ? (document.getElementById('learner-canvas') as HTMLCanvasElement)
             : (document.getElementById('teacher-canvas') as HTMLCanvasElement);
     if (!canvas) return;
-    const imgSrc = userType === 'teacher' ? amaizing : heartPop;
+    const imgSrc = userType === 'teacher' ? amazing : heartPop;
     const row = userType === 'teacher' ? 5 : 8;
     const col = 5;
     const frameCount = userType === 'teacher' ? 24 : 40;
