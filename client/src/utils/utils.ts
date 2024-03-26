@@ -143,3 +143,12 @@ export const spriteAnimation = ({
         animate();
     };
 };
+
+/**
+ * 엘리먼트를 삭제한다.
+ * @param id 삭제하고자 하는 엘리먼트의 id
+ */
+export const removeElement = ({ id }: { id: string }) => {
+    const element = document.getElementById(id);
+    if (element) element.remove();
+};

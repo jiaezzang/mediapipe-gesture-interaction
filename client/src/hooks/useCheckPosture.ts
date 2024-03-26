@@ -117,8 +117,8 @@ export default function useCheckPosture({
                 prevPosArr[maxSize - 1] === '✊' &&
                 data.icon === '🖐️'
             ) {
-                const imgPositionY = getRandomNumber(0.25, 0.5);
                 const id = uuid();
+                const imgPositionY = getRandomNumber(0.25, 0.5);
                 tossCoin({
                     id,
                     position:
@@ -146,7 +146,7 @@ export default function useCheckPosture({
                 prevPosArr[maxSize - 1] === '🖐️' &&
                 data.icon === '✊'
             ) {
-                grabObject({
+                const id = grabObject({
                     pos0: getLandMarkPosition(result, 0),
                     pos5: getLandMarkPosition(result, 5),
                     pos17: getLandMarkPosition(result, 17),
@@ -159,6 +159,12 @@ export default function useCheckPosture({
                         pos17: getLandMarkPosition(result, 17),
                     },
                 });
+                if (id) {
+                    setPostureEffect({
+                        effect: 'removeCoin',
+                        props: { id },
+                    });
+                }
             }
             if (
                 userType === 'teacher' &&
@@ -202,7 +208,7 @@ export default function useCheckPosture({
                 const paw = [bearPaw, catPaw, dogPaw];
                 const imgSrc = getRandomElement(paw);
 
-                printPaw({
+                const id = printPaw({
                     position: getLandMarkPosition(result, 8),
                     ratio: getLandMarkPosition(result, 8).palmRatio,
                     userType,
@@ -217,6 +223,12 @@ export default function useCheckPosture({
                         imgSrc,
                     },
                 });
+                if (id) {
+                    setPostureEffect({
+                        effect: 'removeCoin',
+                        props: { id },
+                    });
+                }
             }
             prevZ = getLandMarkPosition(result, 8).z;
             prevCore = getLandMarkPosition(result, 0).z;

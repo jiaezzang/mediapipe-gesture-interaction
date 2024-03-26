@@ -6,7 +6,7 @@ import { GestureRecognizerResult } from '@mediapipe/tasks-vision';
 import water from '../assets/sprite/water.png';
 import amazing from '../assets/sprite/amazing.png';
 import heartPop from '../assets/sprite/heart_pop.png';
-import { spriteAnimation } from './utils';
+import { removeElement, spriteAnimation } from './utils';
 
 //GESTURE RECOGNITION
 /**
@@ -90,48 +90,38 @@ export const tossCoin = ({
     ratio: number;
     imgPositionY: number;
 }) => {
-    const localCanvas = document.getElementById(
-        'teacher-canvas'
+    const teacherContainer = document.getElementById(
+        'teacher-container'
     ) as HTMLCanvasElement;
-    const remoteCanvas = document.getElementById(
-        'learner-canvas'
-    ) as HTMLCanvasElement;
-    const teacherVideo = document.getElementById('teacher-video');
-    if (!localCanvas || !remoteCanvas || !teacherVideo) return;
-    const localCtx = localCanvas.getContext('2d');
-    if (!localCtx) return;
+    if (!teacherContainer) return;
+    let animationId: number;
+    const rewardSize = Math.round(teacherContainer.offsetWidth * ratio);
+    const positionX = Math.round(teacherContainer.offsetWidth * position.x);
+    let height = Math.round(teacherContainer.offsetHeight * position.y);
     const img = new Image();
+    img.id = id;
     img.src = coin;
-    img.onload = () => {
-        localCanvas.width = teacherVideo.offsetWidth;
-        localCanvas.height = teacherVideo.offsetHeight;
-        remoteCanvas.width = teacherVideo.offsetWidth;
-        remoteCanvas.height = teacherVideo.offsetHeight;
-        let animationId: any;
-        const rewardSize = Math.round(localCanvas.width * ratio);
-        const positionX = Math.round(localCanvas.width * position.x);
-        let height = Math.round(localCanvas.height * position.y);
-        /** local Video 영역에서 동전을 떨어뜨리는 애니메이션을 준다. */
-        const animate = () => {
-            if (!localCtx || !localCanvas) return;
-            localCtx.clearRect(positionX, height - 8, rewardSize, rewardSize);
-            localCtx.drawImage(img, positionX, height, rewardSize, rewardSize);
-            height += 8;
-            if (height > localCanvas.height) {
-                localCtx.clearRect(
-                    positionX,
-                    height - 8,
-                    rewardSize,
-                    rewardSize
-                );
+    img.width = rewardSize;
+    img.height = rewardSize;
+    img.classList.add(`coin`, `absolute`);
+    img.style.left = positionX + 'px';
+    img.style.top = height + 'px';
+    teacherContainer.appendChild(img);
+
+    const animate = () => {
+        const coinEl = document.getElementById(id) as HTMLImageElement;
+        coinEl.style.top = height + 'px';
+        height += 12;
+        if (height > teacherContainer.offsetHeight) {
+            if (coinEl)
                 dropCoin({ id, x: positionX, width: rewardSize, imgPositionY });
-                cancelAnimationFrame(animationId);
-                return;
-            }
-            animationId = requestAnimationFrame(animate);
-        };
-        animate();
+            coinEl.remove();
+            cancelAnimationFrame(animationId);
+            return;
+        }
+        animationId = requestAnimationFrame(animate);
     };
+    animate();
 };
 
 /**
@@ -151,8 +141,7 @@ export const dropCoin = ({
     imgPositionY: number;
 }) => {
     const learnerContainer = document.getElementById('learner-container');
-    const learnerVideo = document.getElementById('learner-video');
-    if (!learnerContainer || !learnerVideo) return;
+    if (!learnerContainer) return;
     let animationId: any;
     let height = 0;
     const img = new Image();
@@ -166,22 +155,15 @@ export const dropCoin = ({
     learnerContainer.appendChild(img);
     const animate = () => {
         const coinEl = document.getElementById(id) as HTMLImageElement;
-        coinEl.style.top = height + 'px';
-        // const coinElements = Array.from(
-        //     learnerContainer.getElementsByClassName('coin')
-        // );
-        // const drawingElement = coinElements.filter((el) =>
-        //     el.classList.contains('drawing')
-        // );
-        // for (let i = drawingElement.length - 1; i >= 0; i--) {
-        //     const el = drawingElement[i];
-        //     learnerContainer.removeChild(el);
-        // }
-        height += 8;
-        if (height > learnerVideo.offsetHeight * imgPositionY) {
-            img.classList.remove('drawing');
+        if (coinEl) {
+            coinEl.style.top = height + 'px';
+            height += 8;
+            if (height > learnerContainer.offsetHeight * imgPositionY) {
+                cancelAnimationFrame(animationId);
+                return;
+            }
+        } else {
             cancelAnimationFrame(animationId);
-            return;
         }
         animationId = requestAnimationFrame(animate);
     };
@@ -208,8 +190,7 @@ export const grabObject = ({
     const learnerContainer = document.getElementById(
         'learner-container'
     ) as HTMLDivElement;
-    const learnerVideo = document.getElementById('learner-video');
-    if (!learnerContainer || !learnerVideo) return;
+    if (!learnerContainer) return;
     //OX를 선택하는 효과
     const centerX =
         ((pos0.x + pos5.x + pos17.x) * learnerContainer.offsetWidth) / 3;
@@ -226,21 +207,22 @@ export const grabObject = ({
         const coinCenterY = coinTop + coin.width / 2;
         const highestY =
             pos5.y > pos17.y
-                ? pos17.y * learnerVideo.offsetHeight
-                : pos5.y * learnerVideo.offsetHeight;
+                ? pos17.y * learnerContainer.offsetHeight
+                : pos5.y * learnerContainer.offsetHeight;
         if (
             coinCenterY > highestY &&
-            coinCenterY < pos0.y * learnerVideo.offsetHeight
+            coinCenterY < pos0.y * learnerContainer.offsetHeight
         ) {
             if (
                 (pos5.x < pos17.x &&
-                    coinCenterX > pos5.x * learnerVideo.offsetWidth &&
-                    coinCenterX < pos17.x * learnerVideo.offsetWidth) ||
+                    coinCenterX > pos5.x * learnerContainer.offsetWidth &&
+                    coinCenterX < pos17.x * learnerContainer.offsetWidth) ||
                 (pos17.x < pos5.x &&
-                    coinCenterX > pos17.x * learnerVideo.offsetWidth &&
-                    coinCenterX < pos5.x * learnerVideo.offsetWidth)
+                    coinCenterX > pos17.x * learnerContainer.offsetWidth &&
+                    coinCenterX < pos5.x * learnerContainer.offsetWidth)
             ) {
-                document.getElementById(coin.id)?.remove();
+                removeElement({ id: coin.id });
+                return coin.id;
             }
         }
     }
@@ -287,34 +269,45 @@ export const printPaw = ({
     userType: string;
     imgSrc: string;
 }) => {
-    const localVideo = document.getElementById(`${userType}-video`);
     const localContainer = document.getElementById(`${userType}-container`);
-    if (!localContainer || !localVideo) return;
+    if (!localContainer) return;
 
     const img = new Image();
     img.src = imgSrc;
-    img.width = (Math.round(localVideo.offsetWidth * ratio) * 2) / 3;
-    img.height = (Math.round(localVideo.offsetWidth * ratio) * 2) / 3;
+    img.width = (Math.round(localContainer.offsetWidth * ratio) * 2) / 3;
+    img.height = (Math.round(localContainer.offsetWidth * ratio) * 2) / 3;
     img.classList.add('paw', 'absolute');
     img.style.left =
-        Math.round(localVideo.offsetWidth * position.x) - img.width / 2 + 'px';
+        Math.round(localContainer.offsetWidth * position.x) -
+        img.width / 2 +
+        'px';
     img.style.top =
-        Math.round(localVideo.offsetHeight * position.y) - img.width / 2 + 'px';
+        Math.round(localContainer.offsetHeight * position.y) -
+        img.width / 2 +
+        'px';
     localContainer.appendChild(img);
-
     const positionX = Number(img.style.left.replace('px', ''));
     const positionY = Number(img.style.top.replace('px', ''));
-    if (userType === 'learner') {
-        removeCoin({ x: positionX, y: positionY });
-        chooseOX({ x: positionX, y: positionY });
-        setTimeout(() => {
-            img.remove();
-        }, 2000);
-        return { x: positionX, y: positionY };
-    }
     setTimeout(() => {
         img.remove();
     }, 2000);
+    if (userType === 'learner') {
+        chooseOX({ x: positionX, y: positionY });
+        const learnerContainer = document.getElementById(`learner-container`);
+        if (!learnerContainer) return;
+        const coinImg = learnerContainer.getElementsByClassName('coin');
+        for (let i = coinImg.length - 1; i >= 0; i--) {
+            const coin = coinImg[i] as HTMLImageElement;
+            const left = Number(coin.style.left.replace('px', ''));
+            const top = Number(coin.style.top.replace('px', ''));
+            const xRange = positionX > left && positionX < left + coin.width;
+            const yRange = positionY > top && positionY < top + coin.height;
+            if (xRange && yRange) {
+                removeElement({ id: coin.id });
+                return coin.id;
+            }
+        }
+    }
 };
 
 /**
@@ -323,13 +316,10 @@ export const printPaw = ({
  */
 export const drawMetalCat = ({ userType }: { userType: TUser }) => {
     const container = document.getElementById(`${userType}-container`);
-    const video = document.getElementById(
-        `${userType}-video`
-    ) as HTMLVideoElement;
-    if (!container || !video) return;
-    const imgSize = Math.round(video.offsetWidth / 3);
+    if (!container) return;
+    const imgSize = Math.round(container.offsetWidth / 3);
     let animationId: number;
-    let height = video.offsetHeight + imgSize;
+    let height = container.offsetHeight + imgSize;
     let checkPoint = false;
     const animate = () => {
         const metalElements = Array.from(
@@ -352,13 +342,13 @@ export const drawMetalCat = ({ userType }: { userType: TUser }) => {
         container.appendChild(img);
         if (checkPoint) {
             height += 8;
-            if (height >= video.offsetHeight + imgSize) {
+            if (height >= container.offsetHeight + imgSize) {
                 img.remove();
                 cancelAnimationFrame(animationId);
                 return;
             }
         } else {
-            if (height <= video.offsetHeight - imgSize + 8) {
+            if (height <= container.offsetHeight - imgSize + 8) {
                 setTimeout(() => {
                     checkPoint = true;
                 }, 1500);
