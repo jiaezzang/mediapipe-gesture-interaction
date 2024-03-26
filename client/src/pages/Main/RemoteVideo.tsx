@@ -12,6 +12,7 @@ import {
     thumbUp,
     tossCoin,
 } from '../../utils/posture';
+import { removeElement } from '../../utils/utils';
 
 type TPostureEffectSignal = {
     type: 'posture-effect';
@@ -45,9 +46,6 @@ export default function RemoteVideo({
                     case 'tossCoin':
                         tossCoin(data.props);
                         break;
-                    case 'removeCoin':
-                        removeCoin(data.props);
-                        break;
                     case 'grabObject':
                         grabObject(data.props);
                         break;
@@ -62,6 +60,9 @@ export default function RemoteVideo({
                         break;
                     case 'thumbDown':
                         thumbDown();
+                        break;
+                    case 'removeCoin':
+                        removeElement(data.props);
                         break;
                 }
             }
