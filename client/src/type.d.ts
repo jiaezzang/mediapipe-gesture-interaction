@@ -59,7 +59,7 @@ type TTossCoinProps = {
     imgPositionY: number;
 };
 /** removeCoin() 메서드의 매개변수 */
-type TRemoveCoinProps = { x: number; y: number };
+type TRemoveCoinProps = { id: string };
 /** metalCat() 메서드의 매개변수 */
 type TMetalCatProps = { userType: TUser };
 /** grabObject() 메서드의 매개변수 */
