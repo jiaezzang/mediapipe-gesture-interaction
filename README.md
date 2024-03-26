@@ -67,11 +67,11 @@ $ git clone https://github.com/jiaezzang/mediapipe-gesture-interaction.git
 ## Main
 
 ### 선생님으로 진입한 경우
-![선생님으로 진입한 경우](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FkJF4v%2FbtsF71DvqVn%2F7QGOIHPuUdeAY64K3oWhR1%2Fimg.png)
+![선생님으로 진입한 경우](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FTOIKk%2FbtsF8lopOPs%2FuHCRJ1AIC56qHxaRtau2a1%2Fimg.png)
 
 ### 학생으로 진입한 경우 
 
-![학생으로 진입한 경우](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fyt4Pu%2FbtsF3XbMrUW%2FK16vYgdGr43daYNzfdylrk%2Fimg.png)
+![학생으로 진입한 경우](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fbnm1m3%2FbtsF58Kwhhh%2FKsYn3d7PNW76rmVQVYt0K1%2Fimg.png)
 
 
 ### 사용 가능 Gesture
