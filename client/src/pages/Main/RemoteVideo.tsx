@@ -1,17 +1,7 @@
 import React, { useEffect } from 'react';
 import Video from './Video';
 import { RTCEvent } from '../../hooks/useSignaling';
-import {
-    chooseOX,
-    drawMetalCat,
-    grabObject,
-    printPaw,
-    removeCoin,
-    setOX,
-    thumbDown,
-    thumbUp,
-    tossCoin,
-} from '../../utils/posture';
+import { postureEffectHandler } from '../../utils/posture';
 import { removeElement } from '../../utils/utils';
 
 type TPostureEffectSignal = {
@@ -23,7 +13,7 @@ export default function RemoteVideo({
     videoRef,
     canvasRef,
     id,
-    posture,
+    posture
 }: {
     videoRef: React.RefObject<HTMLVideoElement>;
     canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -33,33 +23,32 @@ export default function RemoteVideo({
     /** RTCEvent 수신 Emit 등록 */
     useEffect(() => {
         const handleReceiveData = (receiveData: string): void => {
-            const { type, data }: TPostureEffectSignal =
-                JSON.parse(receiveData);
+            const { type, data }: TPostureEffectSignal = JSON.parse(receiveData);
             if (type === 'posture-effect') {
                 switch (data.effect) {
                     case 'drawMetalCat':
-                        drawMetalCat(data.props);
+                        postureEffectHandler.drawMetalCat(data.props);
                         break;
                     case 'printPaw':
-                        printPaw(data.props);
+                        postureEffectHandler.printPaw(data.props);
                         break;
                     case 'tossCoin':
-                        tossCoin(data.props);
+                        postureEffectHandler.tossCoin(data.props);
                         break;
                     case 'grabObject':
-                        grabObject(data.props);
+                        postureEffectHandler.grabObject(data.props);
                         break;
                     case 'setOX':
-                        setOX();
+                        postureEffectHandler.setOX();
                         break;
                     case 'chooseOX':
-                        chooseOX(data.props);
+                        postureEffectHandler.chooseOX(data.props);
                         break;
                     case 'thumbUp':
-                        thumbUp(data.props);
+                        postureEffectHandler.thumbUp(data.props);
                         break;
                     case 'thumbDown':
-                        thumbDown();
+                        postureEffectHandler.thumbDown();
                         break;
                     case 'removeCoin':
                         removeElement(data.props);
@@ -74,17 +63,10 @@ export default function RemoteVideo({
         };
     }, []);
     return (
-        <div
-            id={`${id}-container`}
-            className='relative aspect-w-3 aspect-h-2 overflow-hidden max-w-screen-md m-2 rounded-3xl shadow-xl'
-        >
+        <div id={`${id}-container`} className="relative aspect-w-3 aspect-h-2 overflow-hidden max-w-screen-md m-2 rounded-3xl shadow-xl">
             <Video id={`${id}-video`} videoRef={videoRef} />
-            <canvas
-                id={`${id}-canvas`}
-                ref={canvasRef}
-                className='absolute object-cover top-0 left-0 object w-full h-full rounded-3xl'
-            />
-            <div className='absolute top-5 left-5 z-99 text-5xl'>{posture}</div>
+            <canvas id={`${id}-canvas`} ref={canvasRef} className="absolute object-cover top-0 left-0 object w-full h-full rounded-3xl" />
+            <div className="absolute top-5 left-5 z-99 text-5xl">{posture}</div>
         </div>
     );
 }

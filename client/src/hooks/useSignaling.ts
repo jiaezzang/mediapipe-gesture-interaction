@@ -19,8 +19,7 @@ type TEventNames = TReceive | TSend | TGesture | 'open';
 export const RTCEvent = new EventEmitter3<TEventNames>();
 
 export default function useSignaling(peerConnection?: RTCPeerConnection) {
-    const [connectState, setConnectState] =
-        useState<RTCPeerConnectionState>('connecting');
+    const [connectState, setConnectState] = useState<RTCPeerConnectionState>('connecting');
     const dataChannel = useRef<RTCDataChannel>();
     const ws = useRef<WebSocket>();
 
@@ -102,12 +101,10 @@ export default function useSignaling(peerConnection?: RTCPeerConnection) {
                     .then(() =>
                         sendSignal({
                             type: 'sdp',
-                            data: peerConnection.localDescription!,
+                            data: peerConnection.localDescription!
                         })
                     )
-                    .catch((error) =>
-                        console.error('Error creating offer:', error)
-                    );
+                    .catch((error) => console.error('Error creating offer:', error));
             }
         }
 
@@ -132,11 +129,9 @@ export default function useSignaling(peerConnection?: RTCPeerConnection) {
                     });
             } else if (data.type === 'iceCandidate') {
                 // ICE candidate 데이터를 처리
-                peerConnection
-                    ?.addIceCandidate(new RTCIceCandidate(data.data))
-                    .catch((error) => {
-                        // console.error('Error handling ICE candidate:', error)
-                    });
+                peerConnection?.addIceCandidate(new RTCIceCandidate(data.data)).catch((error) => {
+                    // console.error('Error handling ICE candidate:', error)
+                });
             }
         }
     }, [peerConnection]);
