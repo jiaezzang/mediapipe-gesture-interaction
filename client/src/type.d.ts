@@ -1,14 +1,5 @@
 /** 포스쳐 타입 */
-type TPosture =
-    | undefined
-    | null
-    | '👍'
-    | '👎'
-    | '✌️'
-    | '☝️'
-    | '✊'
-    | '🖐️'
-    | '🤟';
+type TPosture = undefined | null | '👍' | '👎' | '✌️' | '☝️' | '✊' | '🖐️' | '🤟';
 
 /** 유저 타입 */
 type TUser = 'teacher' | 'learner';
@@ -23,23 +14,8 @@ type landMarkPosition = {
 
 /** 포스쳐 효과를 주는 메서드 및 매개변수 타입 */
 type TPostureEffect = {
-    effect:
-        | ''
-        | 'drawMetalCat'
-        | 'printPaw'
-        | 'tossCoin'
-        | 'removeCoin'
-        | 'grabObject'
-        | 'setOX'
-        | 'chooseOX'
-        | 'thumbUp'
-        | 'thumbDown';
-    props?:
-        | printPawProps
-        | drawMetalCatProps
-        | tossCoinProps
-        | removeCoinProps
-        | TGrabObjectProps;
+    effect: '' | 'drawMetalCat' | 'printPaw' | 'tossCoin' | 'removeCoin' | 'grabObject' | 'setOX' | 'chooseOX' | 'thumbUp' | 'thumbDown';
+    props?: printPawProps | drawMetalCatProps | tossCoinProps | removeCoinProps | TGrabObjectProps;
 };
 
 /** prinPaw() 메서드의 매개변수 */

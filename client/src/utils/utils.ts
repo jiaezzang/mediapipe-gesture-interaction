@@ -53,14 +53,7 @@ export const createFixedSizeArray = <T>(maxSize: number) => {
  * @param 세 점의 좌표
  * @returns 세 점의 중심점의 좌표
  */
-export const calculateTriangleCenter = (
-    x0: number,
-    y0: number,
-    x5: number,
-    y5: number,
-    x17: number,
-    y17: number
-) => {
+export const calculateTriangleCenter = (x0: number, y0: number, x5: number, y5: number, x17: number, y17: number) => {
     const centerX = (x0 + x5 + x17) / 3;
     const centerY = (y0 + y5 + y17) / 3;
 
@@ -82,7 +75,7 @@ export const spriteAnimation = ({
     row,
     col,
     frameCount,
-    repeatCount,
+    repeatCount
 }: {
     canvas: HTMLCanvasElement;
     imgSrc: string;
@@ -110,28 +103,13 @@ export const spriteAnimation = ({
             const _col = frame % col;
             const sx = _col * frameWidth;
             const sy = _row * frameHeight;
-            ctx.drawImage(
-                sprite,
-                sx,
-                sy,
-                frameWidth,
-                frameHeight,
-                0,
-                0,
-                canvas.width,
-                canvas.width * ratio
-            );
+            ctx.drawImage(sprite, sx, sy, frameWidth, frameHeight, 0, 0, canvas.width, canvas.width * ratio);
             if (frame === frameCount - 1) {
                 if (repeatCounter < repeatCount - 1) {
                     frame = 0;
                     repeatCounter++;
                 } else {
-                    ctx.clearRect(
-                        0,
-                        0,
-                        canvas.offsetWidth,
-                        canvas.offsetHeight
-                    );
+                    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
                     cancelAnimationFrame(animationId);
                     return;
                 }

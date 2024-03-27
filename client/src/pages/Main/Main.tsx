@@ -1,12 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import useSignaling, { RTCEvent } from '../../hooks/useSignaling';
 import { useAtomValue, useSetAtom } from 'jotai';
-import {
-    localVideoRefAtom,
-    postureAtom,
-    remoteVideoRefAtom,
-    streamingConfigAtom,
-} from '../../atoms';
+import { localVideoRefAtom, postureAtom, remoteVideoRefAtom, streamingConfigAtom } from '../../atoms';
 import useCheckPosture from '../../hooks/useCheckPosture';
 import LocalVideo from './LocalVideo';
 import RemoteVideo from './RemoteVideo';
@@ -30,18 +25,16 @@ export default function Main(): JSX.Element {
     const { connectState } = useSignaling(rtcPeer);
     const streamingConfig = useAtomValue(streamingConfigAtom);
     const { startPostureRecognizer } = useCheckPosture({
-        inputVideoRef: localVideoRef,
+        inputVideoRef: localVideoRef
     });
 
     const connectPeer = (stream: MediaStream) => {
         const config: RTCConfiguration = {
             iceServers: [
                 {
-                    urls:
-                        import.meta.env.VITE_APP_RTC_STUN ??
-                        'stun:stun.l.google.com:19302',
-                },
-            ],
+                    urls: import.meta.env.VITE_APP_RTC_STUN ?? 'stun:stun.l.google.com:19302'
+                }
+            ]
         };
         const rtcPeer = new RTCPeerConnection(config);
         stream.getTracks().forEach((track) => rtcPeer.addTrack(track, stream));
@@ -57,11 +50,8 @@ export default function Main(): JSX.Element {
 
     /** Local Video */
     useEffect(() => {
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia)
-            return;
-        navigator.mediaDevices
-            ?.getUserMedia({ video: true, audio: true })
-            .then(setStream);
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+        navigator.mediaDevices?.getUserMedia({ video: true, audio: true }).then(setStream);
     }, []);
 
     useEffect(() => {
@@ -103,10 +93,7 @@ export default function Main(): JSX.Element {
         const receiveData = (data: string): void => {
             const parsedData = JSON.parse(data);
 
-            if (
-                parsedData.type === 'video-config' ||
-                parsedData.type === 'posture-effect'
-            ) {
+            if (parsedData.type === 'video-config' || parsedData.type === 'posture-effect') {
                 return;
             }
         };
@@ -122,43 +109,18 @@ export default function Main(): JSX.Element {
     }, [userType]);
 
     return (
-        <div
-            className={clsx(
-                'top-container relative w-full h-screen',
-                userType === 'teacher'
-                    ? 'bg-green-100'
-                    : 'bg-[navy] bg-opacity-20'
-            )}
-        >
-            <main className='flex items-center h-full rounded m-auto gap-3 mb-5 mx-[32px]'>
-                <div className='flex flex-col flex-[1] h-full gap-3 justify-center items-center py-4'>
+        <div className={clsx('top-container relative w-full h-screen', userType === 'teacher' ? 'bg-green-100' : 'bg-[navy] bg-opacity-20')}>
+            <main className="flex items-center h-full rounded m-auto gap-3 mb-5 mx-[32px]">
+                <div className="flex flex-col flex-[1] h-full gap-3 justify-center items-center py-4">
                     {userType === 'teacher' ? (
                         <>
-                            <LocalVideo
-                                videoRef={localVideoRef}
-                                canvasRef={localCanvasRef}
-                                id='teacher'
-                                posture={posture}
-                            />
-                            <RemoteVideo
-                                videoRef={remoteVideoRef}
-                                canvasRef={remoteCanvasRef}
-                                id='learner'
-                            />
+                            <LocalVideo videoRef={localVideoRef} canvasRef={localCanvasRef} id="teacher" posture={posture} />
+                            <RemoteVideo videoRef={remoteVideoRef} canvasRef={remoteCanvasRef} id="learner" />
                         </>
                     ) : (
                         <>
-                            <RemoteVideo
-                                videoRef={remoteVideoRef}
-                                canvasRef={remoteCanvasRef}
-                                id='teacher'
-                            />
-                            <LocalVideo
-                                videoRef={localVideoRef}
-                                canvasRef={localCanvasRef}
-                                id='learner'
-                                posture={posture}
-                            />
+                            <RemoteVideo videoRef={remoteVideoRef} canvasRef={remoteCanvasRef} id="teacher" />
+                            <LocalVideo videoRef={localVideoRef} canvasRef={localCanvasRef} id="learner" posture={posture} />
                         </>
                     )}
                 </div>
